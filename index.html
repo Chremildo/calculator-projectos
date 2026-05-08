@@ -3,20 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora Pro</title>
+    <title>Calculadora iOS</title>
     <style>
         :root {
-            --ios-bg: #000000;
-            --ios-num: #333333;
-            --ios-top: #a5a5a5;
-            --ios-orange: #ff9f0a;
-            --ios-text: #ffffff;
+            --ios-bg: #FFFFFF;
+            --ios-num: #F2F2F7; /* Light Gray for numbers */
+            --ios-top: #D1D1D6; /* Silver for top row */
+            --ios-orange: #FF9F0A;
+            --ios-text: #000000;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, sans-serif; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, system-ui, sans-serif; }
 
         body {
-            background-color: #1c1c1e;
+            background-color: #E5E5EA;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -24,81 +24,84 @@
             margin: 0;
         }
 
-        /* LOCKED CONTAINER: This prevents squashing on any screen */
+        /* HARD-LOCKED CONTAINER: Prevents stretching/squashing */
         .calculator {
             width: 360px;
+            height: 760px;
             background-color: var(--ios-bg);
-            border-radius: 40px;
+            border-radius: 45px;
             padding: 20px;
-            border: 1px solid #333;
             display: flex;
             flex-direction: column;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            border: 1px solid #D1D1D6;
         }
 
         .header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
         }
 
         .profile-img {
-            width: 45px;
-            height: 45px;
+            width: 42px;
+            height: 42px;
             border-radius: 50%;
             object-fit: cover;
-            border: 2px solid var(--ios-num);
+            border: 1px solid var(--ios-top);
         }
 
         .brand {
-            color: #8e8e93;
-            font-size: 0.75rem;
+            color: #8E8E93;
+            font-size: 0.7rem;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 1.5px;
+            letter-spacing: 1.2px;
         }
 
-        /* HISTORY AREA: Real scrolling history like you asked */
-        .history-container {
-            height: 60px;
+        /* SCROLLABLE HISTORY: Pro look */
+        .history-pane {
+            height: 50px;
             overflow-y: auto;
             text-align: right;
             padding: 0 10px;
-            color: #636366;
+            color: #8E8E93;
             font-size: 1.1rem;
-            margin-bottom: 5px;
+            margin-top: auto;
         }
 
         .display {
             text-align: right;
             padding: 10px;
             color: var(--ios-text);
-            font-size: 5rem;
+            font-size: 5.5rem;
             font-weight: 300;
             letter-spacing: -2px;
             line-height: 1;
             margin-bottom: 20px;
         }
 
-        /* COMPACT SCIENTIFIC BAR */
+        /* SCIENTIFIC BAR: Clean & Compact */
         .sci-bar {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
+            gap: 12px;
             margin-bottom: 15px;
         }
 
         .sci-btn {
-            background: #1c1c1e;
+            background: var(--ios-num);
             color: var(--ios-orange);
             border: none;
             padding: 10px;
             border-radius: 12px;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             cursor: pointer;
+            font-weight: 600;
         }
 
-        /* THE GRID FIX: Fixed 75px circles ensure NO SQUASHING */
+        /* THE GRID FIX: Precise 75px circles */
         .grid {
             display: grid;
             grid-template-columns: repeat(4, 75px);
@@ -120,19 +123,19 @@
             transition: brightness 0.1s;
         }
 
-        button.key:active { filter: brightness(1.4); }
+        button.key:active { filter: brightness(0.9); }
 
-        .btn-num { background-color: var(--ios-num); color: white; }
-        .btn-top { background-color: var(--ios-top); color: black; font-size: 1.6rem; }
+        .btn-num { background-color: var(--ios-num); color: var(--ios-text); }
+        .btn-top { background-color: var(--ios-top); color: var(--ios-text); font-size: 1.6rem; }
         .btn-op { background-color: var(--ios-orange); color: white; font-size: 2.3rem; }
 
-        /* The Perfect Apple Zero Pill */
+        /* Perfect Zero Pill Alignment */
         .zero {
             grid-column: span 2;
-            width: 162px; /* (75 * 2) + 12 gap */
+            width: 162px; /* 75+75+12 gap */
             border-radius: 50px;
             justify-content: flex-start;
-            padding-left: 28px;
+            padding-left: 30px;
         }
     </style>
 </head>
@@ -141,10 +144,10 @@
 <div class="calculator">
     <div class="header">
         <img src="cprofile.png" alt="Profile" class="profile-img">
-        <span class="brand">Dev Precision</span>
+        <span class="brand">Cremildo Isaias</span>
     </div>
 
-    <div class="history-container" id="history"></div>
+    <div class="history-pane" id="history"></div>
     <div class="display" id="res">0</div>
 
     <div class="sci-bar">
@@ -188,7 +191,8 @@
     const histDiv = document.getElementById('history');
 
     function num(n) {
-        cur = (cur === '0') ? n : cur + n;
+        if (cur === '0' && n !== '.') cur = n;
+        else cur += n;
         resDiv.textContent = cur;
     }
 
@@ -206,7 +210,6 @@
             cur = String(Number(result.toFixed(8)));
             resDiv.textContent = cur;
             buf = '';
-            histDiv.scrollTop = histDiv.scrollHeight;
         } catch { resDiv.textContent = "Error"; }
     }
 
