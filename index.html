@@ -200,6 +200,269 @@
   </div>
 </div>
 
+<div class="wrapper">
+  <div class="calc">
+    <div class="display">
+      <div class="expr" id="expr"></div>
+      <div class="result" id="result">0</div>
+    </div>
+ 
+    <div class="buttons">
+      <button class="special" onclick="inputSci('Math.sqrt(')">√</button>
+      <button class="special" onclick="inputSci('**2')">x²</button>
+      <button class="special" onclick="inputNum('(')">(</button>
+      <button class="special" onclick="inputNum(')')">)</button>
+
+      <button class="special" onclick="clearAll()">AC</button>
+      <button class="special" onclick="clearLast()">⌫</button>
+      <button class="special" onclick="inputOp('%')">%</button>
+      <button class="op" onclick="inputOp('/')">÷</button>
+ 
+      <button onclick="inputNum('7')">7</button>
+      <button onclick="inputNum('8')">8</button>
+      <button onclick="inputNum('9')">9</button>
+      <button class="op" onclick="inputOp('*')">×</button>
+ 
+      <button onclick="inputNum('4')">4</button>
+      <button onclick="inputNum('5')">5</button>
+      <button onclick="inputNum('6')">6</button>
+      <button class="op" onclick="inputOp('-')">−</button>
+ 
+      <button onclick="inputNum('1')">1</button>
+      <button onclick="inputNum('2')">2</button>
+      <button onclick="inputNum('3')">3</button>
+      <button class="op" onclick="inputOp('+')">+</button>
+ 
+      <button class="zero" onclick="inputNum('0')">0</button>
+      <button onclick="inputDot()">.</button>
+      <button class="op" onclick="calculate()">=</button>
+    </div>
+ 
+    <div class="log-section">
+      <div class="log-title">Histórico</div>
+      <div id="log"></div>
+    </div>
+  </div>
+</div>
+
+<div class="wrapper">
+  <div class="calc">
+    <div class="display">
+      <div class="expr" id="expr"></div>
+      <div class="result" id="result">0</div>
+    </div>
+ 
+    <div class="buttons">
+      <button class="special" onclick="inputSci('Math.sqrt(')">√</button>
+      <button class="special" onclick="inputSci('**2')">x²</button>
+      <button class="special" onclick="inputNum('(')">(</button>
+      <button class="special" onclick="inputNum(')')">)</button>
+
+      <button class="special" onclick="clearAll()">AC</button>
+      <button class="special" onclick="clearLast()">⌫</button>
+      <button class="special" onclick="inputOp('%')">%</button>
+      <button class="op" onclick="inputOp('/')">÷</button>
+ 
+      <button onclick="inputNum('7')">7</button>
+      <button onclick="inputNum('8')">8</button>
+      <button onclick="inputNum('9')">9</button>
+      <button class="op" onclick="inputOp('*')">×</button>
+ 
+      <button onclick="inputNum('4')">4</button>
+      <button onclick="inputNum('5')">5</button>
+      <button onclick="inputNum('6')">6</button>
+      <button class="op" onclick="inputOp('-')">−</button>
+ 
+      <button onclick="inputNum('1')">1</button>
+      <button onclick="inputNum('2')">2</button>
+      <button onclick="inputNum('3')">3</button>
+      <button class="op" onclick="inputOp('+')">+</button>
+ 
+      <button class="zero" onclick="inputNum('0')">0</button>
+      <button onclick="inputDot()">.</button>
+      <button class="op" onclick="calculate()">=</button>
+    </div>
+ 
+    <div class="log-section">
+      <div class="log-title">Histórico</div>
+      <div id="log"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  let current = '0';
+  let exprString = '';
+  let justCalc = false;
+ 
+  const resultEl  = document.getElementById('result');
+  const exprEl    = document.getElementById('expr');
+  const logEl     = document.getElementById('log');
+ 
+  function updateDisplay(res, expr = '') {
+    resultEl.textContent = res;
+    exprEl.textContent   = expr;
+  }
+ 
+  function inputNum(n) {
+    if (current === '0' || justCalc) {
+      current = n;
+      justCalc = false;
+    } else {
+      current += n;
+    }
+    updateDisplay(current, exprString);
+  }
+
+  function inputSci(func) {
+    if (func === 'Math.sqrt(') {
+        current = `Math.sqrt(${current})`;
+    } else {
+        current += func;
+    }
+    calculate();
+  }
+ 
+  function inputDot() {
+    if (!current.includes('.')) current += '.';
+    updateDisplay(current);
+  }
+ 
+  function inputOp(op) {
+    exprString = current + ' ' + op + ' ';
+    current = '0';
+    justCalc = false;
+    updateDisplay('0', exprString);
+  }
+ 
+  function calculate() {
+    try {
+      let fullExpr = exprString + current;
+      // Using eval carefully for a calculator project
+      let res = eval(fullExpr.replace('×', '*').replace('÷', '/'));
+      
+      res = parseFloat(res.toFixed(8));
+      addLog(fullExpr + ' =', res);
+      
+      updateDisplay(res, fullExpr + ' =');
+      current = String(res);
+      exprString = '';
+      justCalc = true;
+    } catch (e) {
+      updateDisplay('Erro', '');
+      current = '0';
+    }
+  }
+ 
+  function clearAll() {
+    current = '0'; exprString = ''; justCalc = false;
+    updateDisplay('0', '');
+  }
+ 
+  function clearLast() {
+    current = current.length > 1 ? current.slice(0, -1) : '0';
+    updateDisplay(current);
+  }
+ 
+  function addLog(expr, val) {
+    const entry = document.createElement('div');
+    entry.className = 'log-entry';
+    entry.innerHTML = `<span>${expr}</span><span class="log-val">${val}</span>`;
+    logEl.prepend(entry);
+  }
+</script>
+
+
+
+
+
+  
+<script>
+  let current = '0';
+  let exprString = '';
+  let justCalc = false;
+ 
+  const resultEl  = document.getElementById('result');
+  const exprEl    = document.getElementById('expr');
+  const logEl     = document.getElementById('log');
+ 
+  function updateDisplay(res, expr = '') {
+    resultEl.textContent = res;
+    exprEl.textContent   = expr;
+  }
+ 
+  function inputNum(n) {
+    if (current === '0' || justCalc) {
+      current = n;
+      justCalc = false;
+    } else {
+      current += n;
+    }
+    updateDisplay(current, exprString);
+  }
+
+  function inputSci(func) {
+    if (func === 'Math.sqrt(') {
+        current = `Math.sqrt(${current})`;
+    } else {
+        current += func;
+    }
+    calculate();
+  }
+ 
+  function inputDot() {
+    if (!current.includes('.')) current += '.';
+    updateDisplay(current);
+  }
+ 
+  function inputOp(op) {
+    exprString = current + ' ' + op + ' ';
+    current = '0';
+    justCalc = false;
+    updateDisplay('0', exprString);
+  }
+ 
+  function calculate() {
+    try {
+      let fullExpr = exprString + current;
+      // Using eval carefully for a calculator project
+      let res = eval(fullExpr.replace('×', '*').replace('÷', '/'));
+      
+      res = parseFloat(res.toFixed(8));
+      addLog(fullExpr + ' =', res);
+      
+      updateDisplay(res, fullExpr + ' =');
+      current = String(res);
+      exprString = '';
+      justCalc = true;
+    } catch (e) {
+      updateDisplay('Erro', '');
+      current = '0';
+    }
+  }
+ 
+  function clearAll() {
+    current = '0'; exprString = ''; justCalc = false;
+    updateDisplay('0', '');
+  }
+ 
+  function clearLast() {
+    current = current.length > 1 ? current.slice(0, -1) : '0';
+    updateDisplay(current);
+  }
+ 
+  function addLog(expr, val) {
+    const entry = document.createElement('div');
+    entry.className = 'log-entry';
+    entry.innerHTML = `<span>${expr}</span><span class="log-val">${val}</span>`;
+    logEl.prepend(entry);
+  }
+</script>
+
+  
+
+
+  
 <script>
   let current = '0';
   let operator = null;
