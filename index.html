@@ -3,18 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora</title>
+    <title>Calculadora Pro | Cremildo Isaias</title>
     <style>
-        /* Exact Apple Palette */
         :root {
-            --apple-bg: #000000;
-            --apple-num: #333333;
-            --apple-top: #a5a5a5;
-            --apple-orange: #ff9f0a;
-            --apple-text: #ffffff;
+            --ios-bg: #000000;
+            --ios-num: #333333;
+            --ios-top: #a5a5a5;
+            --ios-orange: #ff9f0a;
+            --ios-text: #ffffff;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, system-ui, sans-serif; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, sans-serif; }
 
         body {
             background-color: #1c1c1e;
@@ -22,94 +21,86 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            margin: 0;
         }
 
-        /* Fixed Dimensions: This stops the "squashing" forever */
-        .calc-container {
-            width: 350px;
-            height: 700px;
-            background-color: var(--apple-bg);
-            border-radius: 45px;
+        /* Fixed Dimensions to prevent squashing */
+        .calculator {
+            width: 375px;
+            height: 812px;
+            background-color: var(--ios-bg);
+            border-radius: 40px;
             padding: 20px;
             display: flex;
             flex-direction: column;
-            justify-content: flex-end; /* Keeps buttons at the bottom */
-            border: 1px solid #222;
+            border: 1px solid #333;
+            position: relative;
         }
 
+        /* Professional Header */
         .header {
             display: flex;
             align-items: center;
-            margin-bottom: auto; /* Pushes brand to top */
-            padding-top: 10px;
+            justify-content: space-between;
+            padding: 10px 5px;
         }
 
-        .profile-img {
+        .profile-pic {
             width: 45px;
             height: 45px;
             border-radius: 50%;
             object-fit: cover;
-            border: 2px solid #333;
-            margin-right: 12px;
+            border: 2px solid var(--ios-num);
         }
 
-        .brand {
+        .brand-name {
             color: #8e8e93;
-            font-size: 0.75rem;
-            font-weight: 600;
+            font-size: 0.7rem;
+            font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 2px;
         }
 
-        .display {
+        /* Display Area */
+        .display-area {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
             text-align: right;
             padding: 20px 10px;
-            margin-bottom: 10px;
         }
 
-        .result {
-            color: var(--apple-text);
+        .history-log {
+            color: #636366;
+            font-size: 1.2rem;
+            min-height: 30px;
+            margin-bottom: 5px;
+        }
+
+        .main-display {
+            color: var(--ios-text);
             font-size: 5.5rem;
             font-weight: 300;
             letter-spacing: -2px;
-            overflow: hidden;
+            line-height: 1;
         }
 
-        /* Scientific Row - Small and Clean */
-        .sci-row {
+        /* Button Grid: 80px circles */
+        .grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
-            margin-bottom: 15px;
-            padding: 0 5px;
-        }
-
-        .sci-btn {
-            background: transparent;
-            color: var(--apple-orange);
-            border: 1px solid #222;
-            padding: 8px;
-            border-radius: 10px;
-            font-size: 0.85rem;
-            cursor: pointer;
-        }
-
-        /* Main Pad: Fixed 75px circles */
-        .pad {
-            display: grid;
-            grid-template-columns: repeat(4, 75px);
-            grid-template-rows: repeat(5, 75px);
+            grid-template-columns: repeat(4, 80px);
+            grid-template-rows: repeat(5, 80px);
             gap: 12px;
             justify-content: center;
+            margin-bottom: 30px;
         }
 
         button {
-            width: 75px;
-            height: 75px;
+            width: 80px;
+            height: 80px;
             border-radius: 50%;
             border: none;
-            font-size: 2rem;
+            font-size: 2.2rem;
             font-weight: 400;
             cursor: pointer;
             display: flex;
@@ -118,37 +109,126 @@
             transition: filter 0.1s;
         }
 
-        button:active { filter: brightness(1.4); }
+        button:active { filter: brightness(1.5); }
 
-        .btn-num { background-color: var(--apple-num); color: white; }
-        .btn-top { background-color: var(--apple-top); color: black; font-size: 1.6rem; }
-        .btn-op { background-color: var(--apple-orange); color: white; font-size: 2.2rem; }
+        .btn-num { background-color: var(--ios-num); color: white; }
+        .btn-top { background-color: var(--ios-top); color: black; font-size: 1.8rem; }
+        .btn-op { background-color: var(--ios-orange); color: white; font-size: 2.5rem; }
 
-        /* The Pill Shape for Zero */
+        /* The Apple Zero Pill */
         .zero {
             grid-column: span 2;
-            width: 162px; /* (75 * 2) + 12 gap */
-            border-radius: 40px;
+            width: 172px; /* 80 + 80 + 12 gap */
+            border-radius: 50px;
             justify-content: flex-start;
-            padding-left: 28px;
+            padding-left: 30px;
         }
 
-        .history-bar {
-            height: 30px;
-            text-align: center;
-            color: #444;
-            font-size: 0.7rem;
-            margin-top: 15px;
+        /* Mini Scientific Bar */
+        .sci-bar {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 15px;
+            padding: 0 10px;
+        }
+
+        .sci-btn {
+            background: transparent;
+            color: #8e8e93;
+            border: none;
+            font-size: 0.9rem;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
 
-<div class="calc-container">
+<div class="calculator">
     <div class="header">
-        <img src="cprofile.png" alt="Profile" class="profile-img">
-        <span class="brand">Cremildo Isaias</span>
+        <img src="cprofile.png" alt="Profile" class="profile-pic">
+        <span class="brand-name">Cremildo Isaias</span>
     </div>
 
-    <div class="display">
-        <div class="result" id="
+    <div class="display-area">
+        <div class="history-log" id="history"></div>
+        <div class="main-display" id="res">0</div>
+    </div>
+
+    <div class="sci-bar">
+        <button class="sci-btn" onclick="sci('sin')">sin</button>
+        <button class="sci-btn" onclick="sci('cos')">cos</button>
+        <button class="sci-btn" onclick="sci('sqrt')">√</button>
+        <button class="sci-btn" onclick="sci('sq')">x²</button>
+    </div>
+
+    <div class="grid">
+        <button class="btn-top" onclick="cls()">AC</button>
+        <button class="btn-top" onclick="del()">⌫</button>
+        <button class="btn-top" onclick="op('%')">%</button>
+        <button class="btn-op" onclick="op('/')">÷</button>
+
+        <button class="btn-num" onclick="num('7')">7</button>
+        <button class="btn-num" onclick="num('8')">8</button>
+        <button class="btn-num" onclick="num('9')">9</button>
+        <button class="btn-op" onclick="op('*')">×</button>
+
+        <button class="btn-num" onclick="num('4')">4</button>
+        <button class="btn-num" onclick="num('5')">5</button>
+        <button class="btn-num" onclick="num('6')">6</button>
+        <button class="btn-op" onclick="op('-')">−</button>
+
+        <button class="btn-num" onclick="num('1')">1</button>
+        <button class="btn-num" onclick="num('2')">2</button>
+        <button class="btn-num" onclick="num('3')">3</button>
+        <button class="btn-op" onclick="op('+')">+</button>
+
+        <button class="btn-num zero" onclick="num('0')">0</button>
+        <button class="btn-num" onclick="num('.')">,</button>
+        <button class="btn-op" onclick="calc()">=</button>
+    </div>
+</div>
+
+<script>
+    let cur = '0';
+    let buffer = '';
+    const display = document.getElementById('res');
+    const history = document.getElementById('history');
+
+    function num(n) {
+        cur = (cur === '0') ? n : cur + n;
+        display.textContent = cur;
+    }
+
+    function op(s) {
+        buffer += cur + s;
+        history.textContent = buffer;
+        cur = '0';
+    }
+
+    function calc() {
+        try {
+            let expr = buffer + cur;
+            let result = eval(expr.replace('×','*').replace('÷','/').replace('−','-'));
+            history.textContent = expr + ' =';
+            cur = String(Number(result.toFixed(8)));
+            display.textContent = cur;
+            buffer = '';
+        } catch { display.textContent = "Error"; }
+    }
+
+    function sci(t) {
+        let n = parseFloat(cur);
+        if(t === 'sin') cur = Math.sin(n);
+        if(t === 'cos') cur = Math.cos(n);
+        if(t === 'sqrt') cur = Math.sqrt(n);
+        if(t === 'sq') cur = Math.pow(n, 2);
+        cur = String(Number(parseFloat(cur).toFixed(6)));
+        display.textContent = cur;
+    }
+
+    function cls() { cur = '0'; buffer = ''; display.textContent = '0'; history.textContent = ''; }
+    function del() { cur = cur.length > 1 ? cur.slice(0, -1) : '0'; display.textContent = cur; }
+</script>
+
+</body>
+</html>
