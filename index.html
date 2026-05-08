@@ -3,14 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cremildo Isaias | Pro Scientific</title>
+    <title>Cremildo Isaias | Pro Calculator</title>
     <style>
         :root {
             --bg: #f2f2f7;
-            --calc-bg: rgba(255, 255, 255, 0.85);
+            --calc-bg: #ffffff;
             --accent: #ff9f0a;
             --text: #1c1c1e;
-            --gray-btn: #e5e5ea;
+            --btn-gray: #e5e5ea;
+            --btn-dark-gray: #d1d1d6;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, system-ui, sans-serif; }
@@ -21,19 +22,16 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 10px;
+            padding: 20px;
         }
 
         .calculator {
             width: 100%;
-            max-width: 380px;
+            max-width: 360px; /* Locks width to prevent stretching */
             background: var(--calc-bg);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
             border-radius: 40px;
-            padding: 20px;
+            padding: 25px;
             box-shadow: 0 40px 80px rgba(0,0,0,0.1);
-            border: 1px solid rgba(255,255,255,0.5);
             display: flex;
             flex-direction: column;
         }
@@ -43,235 +41,150 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 5px;
+            margin-bottom: 10px;
         }
 
         .logo {
-            height: 45px;
-            width: 45px;
+            height: 40px;
+            width: 40px;
             border-radius: 50%;
             object-fit: cover;
-            border: 2px solid white;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border: 2px solid #eee;
         }
 
-        .brand-name { font-size: 0.75rem; font-weight: 700; color: #8e8e93; text-transform: uppercase; letter-spacing: 1.5px; }
+        .brand-name { font-size: 0.7rem; font-weight: 700; color: #8e8e93; text-transform: uppercase; letter-spacing: 1.5px; }
 
-        /* Display Area */
-        .display { text-align: right; padding: 20px 5px; color: var(--text); }
-        .expr-preview { font-size: 1rem; color: #8e8e93; min-height: 1.2em; margin-bottom: 5px; }
-        .result { font-size: 4rem; font-weight: 300; overflow-x: auto; white-space: nowrap; }
+        .display { text-align: right; padding: 30px 10px; color: var(--text); }
+        .result { font-size: 4.5rem; font-weight: 300; white-space: nowrap; overflow: hidden; }
 
-        /* Scientific Toggle */
         .sci-toggle {
-            background: var(--gray-btn);
+            background: var(--btn-gray);
             border: none;
             width: 100%;
             padding: 10px;
-            border-radius: 15px;
-            margin-bottom: 12px;
+            border-radius: 12px;
+            margin-bottom: 20px;
             font-size: 0.75rem;
-            font-weight: 600;
             cursor: pointer;
-            color: #3a3a3c;
-            transition: 0.3s;
-        }
-        .sci-toggle.active { background: var(--accent); color: white; }
-
-        .sci-drawer {
-            display: none;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-            margin-bottom: 12px;
-            animation: slideDown 0.3s ease-out;
+            color: #666;
         }
 
-        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        /* The Grid Fix: '1fr' ensures 4 equal columns */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr); 
+            gap: 12px;
+        }
 
-        /* Keypad Grid */
-        .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-        
-        button.key {
-            aspect-ratio: 1;
+        button {
+            aspect-ratio: 1; /* Forces buttons to stay circular */
             border-radius: 50%;
             border: none;
             font-size: 1.5rem;
             font-weight: 500;
             cursor: pointer;
-            background: white;
-            transition: transform 0.1s, background 0.2s;
+            background: var(--btn-gray);
+            color: var(--text);
             display: flex;
             align-items: center;
             justify-content: center;
+            transition: opacity 0.2s;
         }
 
-        button.key:active { transform: scale(0.9); filter: brightness(0.9); }
+        button:active { opacity: 0.6; }
+        button.num { background: #fefefe; }
         button.op { background: var(--accent); color: white; }
-        button.top-row { background: #d1d1d6; font-size: 1.2rem; }
-        button.sci-btn { background: #e5e5ea; font-size: 0.95rem; border-radius: 12px; aspect-ratio: 1.5; }
-        .zero { grid-column: span 2; aspect-ratio: auto; border-radius: 50px; justify-content: flex-start; padding-left: 25px; }
+        button.top { background: var(--btn-dark-gray); }
 
-        /* History Section */
-        .history-box {
-            margin-top: 20px;
-            padding-top: 15px;
-            border-top: 1px solid rgba(0,0,0,0.08);
-            max-height: 100px;
-            overflow-y: auto;
+        /* Fixed Zero: Spans 2 columns but maintains proper layout */
+        .zero {
+            grid-column: span 2;
+            aspect-ratio: auto; 
+            border-radius: 50px;
+            justify-content: flex-start;
+            padding-left: 25px;
         }
-        .history-title { font-size: 0.7rem; font-weight: 700; color: #aeaeb2; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 1px; }
-        .log-entry { font-size: 0.9rem; color: #636366; display: flex; justify-content: space-between; margin-bottom: 6px; padding: 0 5px; }
 
-        /* Scrollbar Styling */
-        .history-box::-webkit-scrollbar { width: 4px; }
-        .history-box::-webkit-scrollbar-thumb { background: #d1d1d6; border-radius: 10px; }
+        .history-section {
+            margin-top: 20px;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+            max-height: 80px;
+            overflow-y: auto;
+            font-size: 0.8rem;
+            color: #8e8e93;
+        }
     </style>
 </head>
 <body>
 
 <div class="calculator">
     <div class="brand-header">
-        <img src="cprofile.png" alt="Cremildo Isaias" class="logo" onerror="this.src='https://via.placeholder.com/45'">
-        <span class="brand-name">Cremildo Isaias</span>
+        <img src="cprofile.png" alt="Cremildo" class="logo">
+        <span class="brand-name">Dev Precision</span>
     </div>
 
     <div class="display">
-        <div class="expr-preview" id="preview"></div>
         <div class="result" id="res">0</div>
     </div>
 
-    <button class="sci-toggle" id="tgl" onclick="toggleSci()">Scientific Mode</button>
-
-    <div class="sci-drawer" id="drawer">
-        <button class="key sci-btn" onclick="inputSci('Math.sin(')">sin</button>
-        <button class="key sci-btn" onclick="inputSci('Math.cos(')">cos</button>
-        <button class="key sci-btn" onclick="inputSci('Math.sqrt(')">√</button>
-        <button class="key sci-btn" onclick="inputSci('**2')">x²</button>
-    </div>
+    <button class="sci-toggle">Scientific Mode</button>
 
     <div class="grid">
-        <button class="key top-row" onclick="reset()">AC</button>
-        <button class="key top-row" onclick="del()">⌫</button>
-        <button class="key top-row" onclick="op('%')">%</button>
-        <button class="key op" onclick="op('/')">÷</button>
+        <button class="top" onclick="reset()">AC</button>
+        <button class="top" onclick="del()">⌫</button>
+        <button class="top" onclick="setOp('%')">%</button>
+        <button class="op" onclick="setOp('/')">÷</button>
 
-        <button class="key" onclick="num('7')">7</button>
-        <button class="key" onclick="num('8')">8</button>
-        <button class="key" onclick="num('9')">9</button>
-        <button class="key op" onclick="op('*')">×</button>
+        <button class="num" onclick="addNum('7')">7</button>
+        <button class="num" onclick="addNum('8')">8</button>
+        <button class="num" onclick="addNum('9')">9</button>
+        <button class="op" onclick="setOp('*')">×</button>
 
-        <button class="key" onclick="num('4')">4</button>
-        <button class="key" onclick="num('5')">5</button>
-        <button class="key" onclick="num('6')">6</button>
-        <button class="key op" onclick="op('-')">−</button>
+        <button class="num" onclick="addNum('4')">4</button>
+        <button class="num" onclick="addNum('5')">5</button>
+        <button class="num" onclick="addNum('6')">6</button>
+        <button class="op" onclick="setOp('-')">−</button>
 
-        <button class="key" onclick="num('1')">1</button>
-        <button class="key" onclick="num('2')">2</button>
-        <button class="key" onclick="num('3')">3</button>
-        <button class="key op" onclick="op('+')">+</button>
+        <button class="num" onclick="addNum('1')">1</button>
+        <button class="num" onclick="addNum('2')">2</button>
+        <button class="num" onclick="addNum('3')">3</button>
+        <button class="op" onclick="setOp('+')">+</button>
 
-        <button class="key zero" onclick="num('0')">0</button>
-        <button class="key" onclick="num('.')">.</button>
-        <button class="key op" onclick="calculate()">=</button>
+        <button class="num zero" onclick="addNum('0')">0</button>
+        <button class="num" onclick="addNum('.')">.</button>
+        <button class="op" onclick="calc()">=</button>
     </div>
 
-    <div class="history-box">
-        <div class="history-title">Calculations History</div>
-        <div id="history-log"></div>
-    </div>
+    <div class="history-section" id="hist">Histórico...</div>
 </div>
 
 <script>
-    let currentDisplay = '0';
-    let operationBuffer = '';
-    let isResultDisplayed = false;
+    let current = '0';
+    let buffer = '';
+    const resEl = document.getElementById('res');
 
-    function toggleSci() {
-        const drawer = document.getElementById('drawer');
-        const toggleBtn = document.getElementById('tgl');
-        const isCurrentlyOpen = drawer.style.display === 'grid';
-        drawer.style.display = isCurrentlyOpen ? 'none' : 'grid';
-        toggleBtn.classList.toggle('active');
-        toggleBtn.textContent = isCurrentlyOpen ? 'Scientific Mode' : 'Close Scientific Mode';
+    function addNum(n) {
+        if (current === '0') current = n;
+        else current += n;
+        resEl.textContent = current;
     }
 
-    function num(val) {
-        if (currentDisplay === '0' || isResultDisplayed) {
-            currentDisplay = val;
-            isResultDisplayed = false;
-        } else {
-            currentDisplay += val;
-        }
-        updateUI();
+    function reset() { current = '0'; buffer = ''; resEl.textContent = '0'; }
+    
+    function setOp(o) {
+        buffer += current + o;
+        current = '0';
     }
 
-    function op(symbol) {
-        operationBuffer = currentDisplay + ' ' + symbol + ' ';
-        currentDisplay = '0';
-        updateUI();
-    }
-
-    function inputSci(func) {
-        let visualExpr = '';
-        if(func === '**2') visualExpr = `(${currentDisplay})²`; 
-        else visualExpr = func.replace('Math.', '') + currentDisplay + ')';
-        
-        currentDisplay = visualExpr;
-        calculate();
-    }
-
-    function calculate() {
+    function calc() {
         try {
-            let expressionToEval = (operationBuffer + currentDisplay)
-                .replace(/×/g, '*')
-                .replace(/÷/g, '/')
-                .replace(/−/g, '-')
-                .replace(/²/g, '**2')
-                .replace(/sin/g, 'Math.sin')
-                .replace(/cos/g, 'Math.cos')
-                .replace(/√/g, 'Math.sqrt');
-
-            let result = eval(expressionToEval);
-            let formattedResult = Number(result.toFixed(6));
-            
-            // Add to History UI
-            const historyLog = document.getElementById('history-log');
-            const newEntry = document.createElement('div');
-            newEntry.className = 'log-entry';
-            newEntry.innerHTML = `<span>${operationBuffer + currentDisplay}</span><strong>${formattedResult}</strong>`;
-            historyLog.prepend(newEntry);
-
-            currentDisplay = String(formattedResult);
-            operationBuffer = '';
-            isResultDisplayed = true;
-            updateUI();
-        } catch(e) {
-            document.getElementById('res').textContent = "Error";
-            currentDisplay = '0';
-        }
-    }
-
-    function updateUI() {
-        document.getElementById('res').textContent = currentDisplay;
-        document.getElementById('preview').textContent = operationBuffer;
-    }
-
-    function reset() {
-        currentDisplay = '0';
-        operationBuffer = '';
-        isResultDisplayed = false;
-        updateUI();
-    }
-
-    function del() {
-        if (currentDisplay.length > 1) {
-            currentDisplay = currentDisplay.slice(0, -1);
-        } else {
-            currentDisplay = '0';
-        }
-        updateUI();
+            let total = eval(buffer + current);
+            resEl.textContent = total;
+            current = String(total);
+            buffer = '';
+        } catch { resEl.textContent = "Erro"; }
     }
 </script>
-
 </body>
 </html>
