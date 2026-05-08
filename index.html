@@ -5,157 +5,150 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calculadora</title>
     <style>
+        /* Exact Apple Palette */
         :root {
-            --bg-color: #000000;
-            --btn-number: #333333;
-            --btn-top: #a5a5a5;
-            --btn-accent: #ff9f0a;
-            --text-white: #ffffff;
-            --text-black: #000000;
+            --apple-bg: #000000;
+            --apple-num: #333333;
+            --apple-top: #a5a5a5;
+            --apple-orange: #ff9f0a;
+            --apple-text: #ffffff;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", Helvetica, sans-serif;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, system-ui, sans-serif; }
 
         body {
             background-color: #1c1c1e;
             display: flex;
-            align-items: center;
             justify-content: center;
+            align-items: center;
             min-height: 100vh;
+            margin: 0;
         }
 
-        .iphone-frame {
-            width: 375px;
-            background-color: var(--bg-color);
-            border-radius: 40px;
+        /* Fixed Dimensions: This stops the "squashing" forever */
+        .calc-container {
+            width: 350px;
+            height: 700px;
+            background-color: var(--apple-bg);
+            border-radius: 45px;
             padding: 20px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end; /* Keeps buttons at the bottom */
+            border: 1px solid #222;
         }
 
-        /* Profile & Branding Header */
         .header {
             display: flex;
             align-items: center;
-            padding: 10px 10px 0;
+            margin-bottom: auto; /* Pushes brand to top */
+            padding-top: 10px;
         }
 
         .profile-img {
-            width: 40px;
-            height: 40px;
+            width: 45px;
+            height: 45px;
             border-radius: 50%;
             object-fit: cover;
-            border: 1px solid #333;
+            border: 2px solid #333;
             margin-right: 12px;
         }
 
-        .brand-text {
+        .brand {
             color: #8e8e93;
-            font-size: 0.8rem;
-            font-weight: 500;
-            letter-spacing: 0.5px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
-        /* Display */
         .display {
-            padding: 40px 15px 10px;
             text-align: right;
-            color: var(--text-white);
+            padding: 20px 10px;
+            margin-bottom: 10px;
         }
 
         .result {
+            color: var(--apple-text);
             font-size: 5.5rem;
             font-weight: 300;
-            line-height: 1;
             letter-spacing: -2px;
-            overflow-x: auto;
-            white-space: nowrap;
+            overflow: hidden;
         }
 
-        /* Scientific Row (Subtle & Integrated) */
+        /* Scientific Row - Small and Clean */
         .sci-row {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 12px;
-            margin-bottom: 12px;
-            padding: 0 10px;
+            margin-bottom: 15px;
+            padding: 0 5px;
         }
 
         .sci-btn {
-            background: #1c1c1e;
-            color: var(--text-white);
-            border: none;
-            border-radius: 15px;
+            background: transparent;
+            color: var(--apple-orange);
+            border: 1px solid #222;
             padding: 8px;
-            font-size: 0.9rem;
+            border-radius: 10px;
+            font-size: 0.85rem;
             cursor: pointer;
         }
 
-        /* Main Keypad */
-        .grid {
+        /* Main Pad: Fixed 75px circles */
+        .pad {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(4, 75px);
+            grid-template-rows: repeat(5, 75px);
             gap: 12px;
-            padding: 10px;
+            justify-content: center;
         }
 
-        button.key {
-            aspect-ratio: 1;
-            border: none;
+        button {
+            width: 75px;
+            height: 75px;
             border-radius: 50%;
+            border: none;
             font-size: 2rem;
             font-weight: 400;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: opacity 0.15s;
+            transition: filter 0.1s;
         }
 
-        button.key:active {
-            opacity: 0.7;
-        }
+        button:active { filter: brightness(1.4); }
 
-        .num { background-color: var(--btn-number); color: var(--text-white); }
-        .top { background-color: var(--btn-top); color: var(--text-black); font-size: 1.6rem; }
-        .op  { background-color: var(--btn-accent); color: var(--text-white); font-size: 2.2rem; }
+        .btn-num { background-color: var(--apple-num); color: white; }
+        .btn-top { background-color: var(--apple-top); color: black; font-size: 1.6rem; }
+        .btn-op { background-color: var(--apple-orange); color: white; font-size: 2.2rem; }
 
-        /* The Apple Zero: Wide pill shape */
+        /* The Pill Shape for Zero */
         .zero {
             grid-column: span 2;
-            aspect-ratio: auto;
-            border-radius: 50px;
+            width: 162px; /* (75 * 2) + 12 gap */
+            border-radius: 40px;
             justify-content: flex-start;
-            padding-left: 32px;
+            padding-left: 28px;
         }
 
-        /* Hidden History Log (Bottom) */
-        .history {
-            margin-top: 15px;
-            height: 40px;
-            overflow-y: auto;
-            font-size: 0.75rem;
-            color: #48484a;
+        .history-bar {
+            height: 30px;
             text-align: center;
-            padding: 0 10px;
+            color: #444;
+            font-size: 0.7rem;
+            margin-top: 15px;
         }
     </style>
 </head>
 <body>
 
-<div class="iphone-frame">
+<div class="calc-container">
     <div class="header">
-        <img src="cprofile.png" alt="Kevin" class="profile-img">
-        <span class="brand-text">Cremildo Isaias</span>
+        <img src="cprofile.png" alt="Profile" class="profile-img">
+        <span class="brand">Cremildo Isaias</span>
     </div>
 
     <div class="display">
-        <div class="result" id="display">0</div>
-    </div>
-
-    <div class="sci-row">
-        <button class="sci-btn" onclick="sci('Math.sin')">sin</
+        <div class="result" id="
