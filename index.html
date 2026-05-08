@@ -3,124 +3,126 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cremildo Isaias | Pro Calculator</title>
+    <title>Cremildo Isaias | Pro Calc</title>
     <style>
         :root {
-            --bg: #f2f2f7;
-            --calc-bg: #ffffff;
+            --bg: #1c1c1e;
             --accent: #ff9f0a;
-            --text: #1c1c1e;
-            --btn-gray: #e5e5ea;
-            --btn-dark-gray: #d1d1d6;
+            --num-btn: #333333;
+            --top-btn: #a5a5a5;
+            --text: #ffffff;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, system-ui, sans-serif; }
 
         body {
-            background: linear-gradient(135deg, #e5e5ea 0%, #d1d1d6 100%);
+            background-color: #000;
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            padding: 10px;
         }
 
         .calculator {
             width: 100%;
-            max-width: 360px; /* Locks width to prevent stretching */
-            background: var(--calc-bg);
+            max-width: 380px;
+            background: #000;
             border-radius: 40px;
-            padding: 25px;
-            box-shadow: 0 40px 80px rgba(0,0,0,0.1);
-            display: flex;
-            flex-direction: column;
+            padding: 20px;
+            border: 1px solid #333;
         }
 
-        /* Branding Section */
+        /* Branding Area */
         .brand-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 10px;
+            margin-bottom: 20px;
         }
 
         .logo {
-            height: 40px;
-            width: 40px;
+            height: 45px;
+            width: 45px;
             border-radius: 50%;
             object-fit: cover;
-            border: 2px solid #eee;
+            border: 2px solid #333;
         }
 
-        .brand-name { font-size: 0.7rem; font-weight: 700; color: #8e8e93; text-transform: uppercase; letter-spacing: 1.5px; }
+        .brand-name { font-size: 0.7rem; color: #8e8e93; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; }
 
-        .display { text-align: right; padding: 30px 10px; color: var(--text); }
-        .result { font-size: 4.5rem; font-weight: 300; white-space: nowrap; overflow: hidden; }
+        .display { text-align: right; padding: 20px 10px; color: white; margin-bottom: 10px; }
+        .result { font-size: 5rem; font-weight: 300; overflow: hidden; }
 
-        .sci-toggle {
-            background: var(--btn-gray);
-            border: none;
-            width: 100%;
-            padding: 10px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            font-size: 0.75rem;
-            cursor: pointer;
-            color: #666;
+        /* Scientific Drawer (Aligned 4-cols to match numbers) */
+        .sci-drawer {
+            display: none;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 12px;
+            animation: fadeIn 0.3s ease;
         }
 
-        /* The Grid Fix: '1fr' ensures 4 equal columns */
         .grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr); 
+            grid-template-columns: repeat(4, 1fr);
             gap: 12px;
         }
 
         button {
-            aspect-ratio: 1; /* Forces buttons to stay circular */
+            aspect-ratio: 1;
             border-radius: 50%;
             border: none;
-            font-size: 1.5rem;
+            font-size: 1.6rem;
             font-weight: 500;
             cursor: pointer;
-            background: var(--btn-gray);
-            color: var(--text);
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: opacity 0.2s;
+            transition: brightness 0.2s;
         }
 
-        button:active { opacity: 0.6; }
-        button.num { background: #fefefe; }
-        button.op { background: var(--accent); color: white; }
-        button.top { background: var(--btn-dark-gray); }
+        button:active { filter: brightness(1.5); }
 
-        /* Fixed Zero: Spans 2 columns but maintains proper layout */
-        .zero {
-            grid-column: span 2;
-            aspect-ratio: auto; 
-            border-radius: 50px;
-            justify-content: flex-start;
-            padding-left: 25px;
+        .btn-num { background: var(--num-btn); color: white; }
+        .btn-op { background: var(--accent); color: white; font-size: 2rem; }
+        .btn-top { background: var(--top-btn); color: black; }
+        .btn-sci { background: #222; color: var(--accent); font-size: 1rem; }
+
+        .zero { grid-column: span 2; aspect-ratio: auto; border-radius: 50px; justify-content: flex-start; padding-left: 30px; }
+
+        .mode-btn {
+            width: 100%;
+            height: 40px;
+            border-radius: 20px;
+            background: #222;
+            color: #888;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            border: 1px solid #333;
+            cursor: pointer;
         }
 
-        .history-section {
+        .history-log {
             margin-top: 20px;
-            border-top: 1px solid #eee;
-            padding-top: 15px;
-            max-height: 80px;
+            padding: 15px;
+            border-top: 1px solid #222;
+            max-height: 100px;
             overflow-y: auto;
+            color: #666;
             font-size: 0.8rem;
-            color: #8e8e93;
         }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
 
 <div class="calculator">
     <div class="brand-header">
-        <img src="cprofile.png" alt="Cremildo" class="logo">
+        <img src="cprofile.png" alt="Logo" class="logo">
         <span class="brand-name">Dev Precision</span>
     </div>
 
@@ -128,62 +130,85 @@
         <div class="result" id="res">0</div>
     </div>
 
-    <button class="sci-toggle">Scientific Mode</button>
+    <button class="mode-btn" onclick="toggleSci()">Scientific Tools</button>
 
-    <div class="grid">
-        <button class="top" onclick="reset()">AC</button>
-        <button class="top" onclick="del()">⌫</button>
-        <button class="top" onclick="setOp('%')">%</button>
-        <button class="op" onclick="setOp('/')">÷</button>
-
-        <button class="num" onclick="addNum('7')">7</button>
-        <button class="num" onclick="addNum('8')">8</button>
-        <button class="num" onclick="addNum('9')">9</button>
-        <button class="op" onclick="setOp('*')">×</button>
-
-        <button class="num" onclick="addNum('4')">4</button>
-        <button class="num" onclick="addNum('5')">5</button>
-        <button class="num" onclick="addNum('6')">6</button>
-        <button class="op" onclick="setOp('-')">−</button>
-
-        <button class="num" onclick="addNum('1')">1</button>
-        <button class="num" onclick="addNum('2')">2</button>
-        <button class="num" onclick="addNum('3')">3</button>
-        <button class="op" onclick="setOp('+')">+</button>
-
-        <button class="num zero" onclick="addNum('0')">0</button>
-        <button class="num" onclick="addNum('.')">.</button>
-        <button class="op" onclick="calc()">=</button>
+    <div class="sci-drawer" id="drawer">
+        <button class="btn-sci" onclick="sci('Math.sin(')">sin</button>
+        <button class="btn-sci" onclick="sci('Math.cos(')">cos</button>
+        <button class="btn-sci" onclick="sci('Math.sqrt(')">√</button>
+        <button class="btn-sci" onclick="sci('**2')">x²</button>
     </div>
 
-    <div class="history-section" id="hist">Histórico...</div>
+    <div class="grid">
+        <button class="btn-top" onclick="reset()">AC</button>
+        <button class="btn-top" onclick="del()">⌫</button>
+        <button class="btn-top" onclick="setOp('%')">%</button>
+        <button class="btn-op" onclick="setOp('/')">÷</button>
+
+        <button class="btn-num" onclick="add('7')">7</button>
+        <button class="btn-num" onclick="add('8')">8</button>
+        <button class="btn-num" onclick="add('9')">9</button>
+        <button class="btn-op" onclick="setOp('*')">×</button>
+
+        <button class="btn-num" onclick="add('4')">4</button>
+        <button class="btn-num" onclick="add('5')">5</button>
+        <button class="btn-num" onclick="add('6')">6</button>
+        <button class="btn-op" onclick="setOp('-')">−</button>
+
+        <button class="btn-num" onclick="add('1')">1</button>
+        <button class="btn-num" onclick="add('2')">2</button>
+        <button class="btn-num" onclick="add('3')">3</button>
+        <button class="btn-op" onclick="setOp('+')">+</button>
+
+        <button class="btn-num zero" onclick="add('0')">0</button>
+        <button class="btn-num" onclick="add('.')">.</button>
+        <button class="btn-op" onclick="calculate()">=</button>
+    </div>
+
+    <div class="history-log" id="log">History will appear here...</div>
 </div>
 
 <script>
     let current = '0';
     let buffer = '';
     const resEl = document.getElementById('res');
+    const logEl = document.getElementById('log');
 
-    function addNum(n) {
-        if (current === '0') current = n;
-        else current += n;
+    function toggleSci() {
+        const d = document.getElementById('drawer');
+        d.style.display = d.style.display === 'grid' ? 'none' : 'grid';
+    }
+
+    function add(n) {
+        current = (current === '0') ? n : current + n;
         resEl.textContent = current;
     }
 
     function reset() { current = '0'; buffer = ''; resEl.textContent = '0'; }
-    
+    function del() { current = current.length > 1 ? current.slice(0, -1) : '0'; resEl.textContent = current; }
+
     function setOp(o) {
         buffer += current + o;
         current = '0';
     }
 
-    function calc() {
+    function sci(f) {
+        if(f === '**2') current = `(${current})**2`;
+        else current = f + current + ')';
+        calculate();
+    }
+
+    function calculate() {
         try {
-            let total = eval(buffer + current);
-            resEl.textContent = total;
-            current = String(total);
+            let final = eval(buffer + current);
+            let entry = document.createElement('div');
+            entry.textContent = (buffer + current).replace(/\*\*/g, '^') + ' = ' + final;
+            logEl.prepend(entry);
+            
+            current = String(Number(final.toFixed(6)));
             buffer = '';
-        } catch { resEl.textContent = "Erro"; }
+            resEl.textContent = current;
+        } catch { resEl.textContent = "Error"; }
     }
 </script>
 </body>
