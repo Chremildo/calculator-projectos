@@ -6,10 +6,11 @@
     <title>Calculadora Pro</title>
     <style>
         :root {
-            --bg: #000000;
-            --num: #333333;
-            --top: #a5a5a5;
-            --orange: #ff9f0a;
+            --ios-bg: #000000;
+            --ios-num: #333333;
+            --ios-top: #a5a5a5;
+            --ios-orange: #ff9f0a;
+            --ios-text: #ffffff;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, sans-serif; }
@@ -20,61 +21,66 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            overflow: hidden; /* Stops the body from scrolling */
+            margin: 0;
         }
 
-        /* HARD LOCKED DIMENSIONS - Cannot squash */
-        .calc-wrapper {
+        /* LOCKED CONTAINER: This prevents squashing on any screen */
+        .calculator {
             width: 360px;
-            height: 780px; 
-            background: var(--bg);
+            background-color: var(--ios-bg);
             border-radius: 40px;
             padding: 20px;
+            border: 1px solid #333;
             display: flex;
             flex-direction: column;
-            border: 1px solid #333;
         }
 
         .header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            height: 50px;
+            margin-bottom: 10px;
         }
 
-        .profile {
+        .profile-img {
             width: 45px;
             height: 45px;
             border-radius: 50%;
             object-fit: cover;
-            border: 2px solid var(--num);
+            border: 2px solid var(--ios-num);
         }
 
-        .brand { color: #8e8e93; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+        .brand {
+            color: #8e8e93;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
 
-        /* HISTORY SECTION */
-        .history-box {
-            flex: 1; /* Takes up remaining space */
+        /* HISTORY AREA: Real scrolling history like you asked */
+        .history-container {
+            height: 60px;
             overflow-y: auto;
             text-align: right;
-            padding: 10px;
+            padding: 0 10px;
             color: #636366;
             font-size: 1.1rem;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
+            margin-bottom: 5px;
         }
 
         .display {
             text-align: right;
             padding: 10px;
-            color: white;
+            color: var(--ios-text);
             font-size: 5rem;
             font-weight: 300;
-            margin-bottom: 10px;
+            letter-spacing: -2px;
+            line-height: 1;
+            margin-bottom: 20px;
         }
 
-        /* SCIENTIFIC BAR - Compact */
+        /* COMPACT SCIENTIFIC BAR */
         .sci-bar {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -84,15 +90,15 @@
 
         .sci-btn {
             background: #1c1c1e;
-            color: var(--orange);
+            color: var(--ios-orange);
             border: none;
             padding: 10px;
-            border-radius: 10px;
-            font-size: 0.8rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
             cursor: pointer;
         }
 
-        /* GRID FIX: Constant 75px circles */
+        /* THE GRID FIX: Fixed 75px circles ensure NO SQUASHING */
         .grid {
             display: grid;
             grid-template-columns: repeat(4, 75px);
@@ -111,32 +117,34 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: 0.1s;
+            transition: brightness 0.1s;
         }
 
-        button.key:active { filter: brightness(1.5); }
-        .btn-n { background: var(--num); color: white; }
-        .btn-t { background: var(--top); color: black; font-size: 1.5rem; }
-        .btn-o { background: var(--orange); color: white; font-size: 2.2rem; }
+        button.key:active { filter: brightness(1.4); }
 
+        .btn-num { background-color: var(--ios-num); color: white; }
+        .btn-top { background-color: var(--ios-top); color: black; font-size: 1.6rem; }
+        .btn-op { background-color: var(--ios-orange); color: white; font-size: 2.3rem; }
+
+        /* The Perfect Apple Zero Pill */
         .zero {
             grid-column: span 2;
-            width: 162px; /* 75+75+12 gap */
+            width: 162px; /* (75 * 2) + 12 gap */
             border-radius: 50px;
             justify-content: flex-start;
-            padding-left: 30px;
+            padding-left: 28px;
         }
     </style>
 </head>
 <body>
 
-<div class="calc-wrapper">
+<div class="calculator">
     <div class="header">
-        <img src="cprofile.png" alt="Kevin" class="profile" onerror="this.src='https://via.placeholder.com/45'">
-        <span class="brand">Cremildo Isaias</span>
+        <img src="cprofile.png" alt="Profile" class="profile-img">
+        <span class="brand">Dev Precision</span>
     </div>
 
-    <div class="history-box" id="hist"></div>
+    <div class="history-container" id="history"></div>
     <div class="display" id="res">0</div>
 
     <div class="sci-bar">
@@ -147,29 +155,29 @@
     </div>
 
     <div class="grid">
-        <button class="key btn-t" onclick="cls()">AC</button>
-        <button class="key btn-t" onclick="del()">⌫</button>
-        <button class="key btn-t" onclick="op('%')">%</button>
-        <button class="key btn-o" onclick="op('/')">÷</button>
+        <button class="key btn-top" onclick="cls()">AC</button>
+        <button class="key btn-top" onclick="del()">⌫</button>
+        <button class="key btn-top" onclick="op('%')">%</button>
+        <button class="key btn-op" onclick="op('/')">÷</button>
 
-        <button class="key btn-n" onclick="num('7')">7</button>
-        <button class="key btn-n" onclick="num('8')">8</button>
-        <button class="key btn-n" onclick="num('9')">9</button>
-        <button class="key btn-o" onclick="op('*')">×</button>
+        <button class="key btn-num" onclick="num('7')">7</button>
+        <button class="key btn-num" onclick="num('8')">8</button>
+        <button class="key btn-num" onclick="num('9')">9</button>
+        <button class="key btn-op" onclick="op('*')">×</button>
 
-        <button class="key btn-n" onclick="num('4')">4</button>
-        <button class="key btn-n" onclick="num('5')">5</button>
-        <button class="key btn-n" onclick="num('6')">6</button>
-        <button class="key btn-o" onclick="op('-')">−</button>
+        <button class="key btn-num" onclick="num('4')">4</button>
+        <button class="key btn-num" onclick="num('5')">5</button>
+        <button class="key btn-num" onclick="num('6')">6</button>
+        <button class="key btn-op" onclick="op('-')">−</button>
 
-        <button class="key btn-n" onclick="num('1')">1</button>
-        <button class="key btn-n" onclick="num('2')">2</button>
-        <button class="key btn-n" onclick="num('3')">3</button>
-        <button class="key btn-o" onclick="op('+')">+</button>
+        <button class="key btn-num" onclick="num('1')">1</button>
+        <button class="key btn-num" onclick="num('2')">2</button>
+        <button class="key btn-num" onclick="num('3')">3</button>
+        <button class="key btn-op" onclick="op('+')">+</button>
 
-        <button class="key btn-n zero" onclick="num('0')">0</button>
-        <button class="key btn-n" onclick="num('.')">,</button>
-        <button class="key btn-o" onclick="calc()">=</button>
+        <button class="key btn-num zero" onclick="num('0')">0</button>
+        <button class="key btn-num" onclick="num('.')">,</button>
+        <button class="key btn-op" onclick="calc()">=</button>
     </div>
 </div>
 
@@ -177,7 +185,7 @@
     let cur = '0';
     let buf = '';
     const resDiv = document.getElementById('res');
-    const histDiv = document.getElementById('hist');
+    const histDiv = document.getElementById('history');
 
     function num(n) {
         cur = (cur === '0') ? n : cur + n;
@@ -194,10 +202,11 @@
         try {
             let expr = buf + cur;
             let result = eval(expr.replace('×','*').replace('÷','/').replace('−','-'));
-            histDiv.innerHTML += `<div>${expr} =</div>`;
+            histDiv.innerHTML = `<div>${expr} =</div>`;
             cur = String(Number(result.toFixed(8)));
             resDiv.textContent = cur;
             buf = '';
+            histDiv.scrollTop = histDiv.scrollHeight;
         } catch { resDiv.textContent = "Error"; }
     }
 
