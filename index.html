@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dev Precision | Premium Calc</title>
+    <title>Cremildo Isaias | Pro Calc</title>
     <style>
         :root {
             --bg: #000000;
-            --btn-gray: #333333;
-            --btn-light: #a5a5a5;
+            --btn-num: #333333;
+            --btn-top: #a5a5a5;
             --accent: #ff9f0a;
             --text: #ffffff;
         }
@@ -17,54 +17,85 @@
 
         body {
             background-color: #1c1c1e;
-            min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            min-height: 100vh;
+            margin: 0;
         }
 
+        /* Fixed Width: Stops the horizontal stretching */
         .calculator {
-            width: 360px; /* Locked width to stop horizontal stretching */
+            width: 350px; 
             background: var(--bg);
-            border-radius: 45px;
-            padding: 25px;
-            border: 1px solid #2c2c2e;
-            box-shadow: 0 50px 100px rgba(0,0,0,0.5);
+            border-radius: 40px;
+            padding: 20px;
+            border: 1px solid #333;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
         }
 
-        /* Branding */
         .header {
             display: flex;
             align-items: center;
             justify-content: space-between;
             margin-bottom: 10px;
         }
+
         .logo {
             width: 50px;
             height: 50px;
             border-radius: 50%;
             object-fit: cover;
-            border: 2px solid var(--btn-gray);
+            border: 1px solid #444;
         }
-        .brand { font-size: 0.7rem; color: #8e8e93; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; }
 
-        /* Display */
-        .display { text-align: right; padding: 30px 10px; color: var(--text); }
-        .result { font-size: 5rem; font-weight: 300; overflow: hidden; letter-spacing: -2px; }
+        .brand { font-size: 0.65rem; color: #8e8e93; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; }
 
-        /* Buttons Grid - THE FIX */
+        .display {
+            text-align: right;
+            padding: 20px 5px;
+            color: white;
+            min-height: 140px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+        }
+
+        .result { font-size: 4.5rem; font-weight: 300; letter-spacing: -2px; line-height: 1; overflow: hidden; }
+
+        .sci-toggle {
+            width: 100%;
+            padding: 10px;
+            background: #222;
+            color: var(--accent);
+            border: none;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            font-size: 0.75rem;
+            cursor: pointer;
+        }
+
+        .sci-drawer {
+            display: none;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        /* The Grid Fix: Fixed 72px columns */
         .grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr); /* 4 perfect equal columns */
+            grid-template-columns: repeat(4, 72px); 
+            justify-content: center;
             gap: 12px;
         }
 
         button {
-            aspect-ratio: 1 / 1; /* FORCE PERFECTION */
+            width: 72px;
+            height: 72px;
             border-radius: 50%;
             border: none;
-            font-size: 1.6rem;
+            font-size: 1.7rem;
             font-weight: 500;
             cursor: pointer;
             display: flex;
@@ -73,54 +104,31 @@
             transition: filter 0.2s;
         }
 
-        button:active { filter: brightness(1.5); }
+        button:active { filter: brightness(1.4); }
 
-        .num { background: var(--btn-gray); color: white; }
-        .op { background: var(--accent); color: white; font-size: 2rem; }
-        .top { background: var(--btn-light); color: black; }
-        .sci-btn { background: #1c1c1e; color: var(--accent); font-size: 1rem; border: 1px solid #333; }
+        .num { background: var(--btn-num); color: white; }
+        .op { background: var(--accent); color: white; font-size: 2.2rem; }
+        .top { background: var(--btn-top); color: black; }
+        .sci { background: #222; color: var(--accent); font-size: 1rem; border-radius: 15px; }
 
+        /* The Zero Fix: Exactly two buttons + one gap wide */
         .zero {
             grid-column: span 2;
-            aspect-ratio: auto; /* Zero needs to be wide */
-            height: 72px; /* Matches the height of the circular buttons */
-            border-radius: 50px;
+            width: 156px; 
+            border-radius: 40px;
             justify-content: flex-start;
             padding-left: 28px;
         }
-
-        /* History & Sci Drawer */
-        .sci-drawer {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease-out, margin 0.3s;
-        }
-        .sci-drawer.open { max-height: 100px; margin-bottom: 12px; }
 
         .history {
             margin-top: 20px;
             height: 80px;
             overflow-y: auto;
             border-top: 1px solid #222;
-            padding-top: 10px;
+            padding: 10px 5px;
             color: #666;
-            font-size: 0.8rem;
-            line-height: 1.5;
-        }
-
-        .sci-toggle {
-            width: 100%;
-            padding: 8px;
-            background: transparent;
-            color: #8e8e93;
-            border: 1px solid #333;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            font-size: 0.7rem;
-            text-transform: uppercase;
+            font-size: 0.85rem;
+            line-height: 1.4;
         }
     </style>
 </head>
@@ -129,20 +137,20 @@
 <div class="calculator">
     <div class="header">
         <img src="cprofile.png" alt="Cremildo" class="logo">
-        <span class="brand">Cremildo Isaias</span>
+        <span class="brand">Dev Precision</span>
     </div>
 
     <div class="display">
         <div class="result" id="res">0</div>
     </div>
 
-    <button class="sci-toggle" onclick="document.getElementById('sci').classList.toggle('open')">Scientific Tools</button>
+    <button class="sci-toggle" onclick="toggleSci()">Scientific Tools</button>
 
-    <div class="sci-drawer" id="sci">
-        <button class="sci-btn" onclick="sciOp('Math.sin(')">sin</button>
-        <button class="sci-btn" onclick="sciOp('Math.cos(')">cos</button>
-        <button class="sci-btn" onclick="sciOp('Math.sqrt(')">√</button>
-        <button class="sci-btn" onclick="sciOp('**2')">x²</button>
+    <div class="sci-drawer" id="drawer">
+        <button class="sci" onclick="sci('Math.sin(')">sin</button>
+        <button class="sci" onclick="sci('Math.cos(')">cos</button>
+        <button class="sci" onclick="sci('Math.sqrt(')">√</button>
+        <button class="sci" onclick="sci('**2')">x²</button>
     </div>
 
     <div class="grid">
@@ -158,60 +166,4 @@
 
         <button class="num" onclick="add('4')">4</button>
         <button class="num" onclick="add('5')">5</button>
-        <button class="num" onclick="add('6')">6</button>
-        <button class="op" onclick="addOp('-')">−</button>
-
-        <button class="num" onclick="add('1')">1</button>
-        <button class="num" onclick="add('2')">2</button>
-        <button class="num" onclick="add('3')">3</button>
-        <button class="op" onclick="addOp('+')">+</button>
-
-        <button class="num zero" onclick="add('0')">0</button>
-        <button class="num" onclick="add('.')">.</button>
-        <button class="op" onclick="calculate()">=</button>
-    </div>
-
-    <div class="history" id="history">History starts here...</div>
-</div>
-
-<script>
-    let current = '0';
-    let buffer = '';
-
-    function add(n) {
-        current = (current === '0') ? n : current + n;
-        document.getElementById('res').textContent = current;
-    }
-
-    function addOp(o) {
-        buffer += current + o;
-        current = '0';
-    }
-
-    function sciOp(f) {
-        if(f === '**2') current = `(${current})**2`;
-        else current = f + current + ')';
-        calculate();
-    }
-
-    function calculate() {
-        try {
-            let expr = buffer + current;
-            let result = eval(expr.replace('×','*').replace('÷','/').replace('−','-'));
-            
-            let log = document.createElement('div');
-            log.textContent = `${expr} = ${result}`;
-            document.getElementById('history').prepend(log);
-
-            current = String(Number(result.toFixed(6)));
-            buffer = '';
-            document.getElementById('res').textContent = current;
-        } catch(e) { document.getElementById('res').textContent = "Error"; }
-    }
-
-    function reset() { current = '0'; buffer = ''; document.getElementById('res').textContent = '0'; }
-    function del() { current = current.length > 1 ? current.slice(0, -1) : '0'; document.getElementById('res').textContent = current; }
-</script>
-
-</body>
-</html>
+        <button
