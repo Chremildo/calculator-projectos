@@ -3,52 +3,89 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Original Pro Calculator</title>
+    <title>Cremildo Isaias | Pro Calc</title>
     <style>
         :root {
-            --bg: #000000; /* Apple's dark mode calculator base */
-            --text: #ffffff;
-            --orange: #ff9f0a;
-            --gray: #a5a5a5;
-            --dark-gray: #333333;
+            --bg: #f2f2f7;
+            --calc-bg: rgba(255, 255, 255, 0.8);
+            --accent: #ff9f0a;
+            --text: #1c1c1e;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, system-ui, sans-serif; }
 
         body {
-            background-color: #1c1c1e;
+            background: linear-gradient(135deg, #e5e5ea 0%, #d1d1d6 100%);
+            min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            min-height: 100vh;
+            padding: 20px;
         }
 
-        .phone-container {
-            width: 350px;
-            background: var(--bg);
-            border-radius: 40px;
-            padding: 20px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-            border: 1px solid #444;
+        /* Container that scales perfectly */
+        .calculator {
+            width: 100%;
+            max-width: 400px; /* Desktop width */
+            background: var(--calc-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 30px;
+            padding: 25px;
+            box-shadow: 0 40px 80px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.5);
+        }
+
+        /* Your Logo Area */
+        .brand-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .logo {
+            height: 40px; /* Adjust based on your image */
+            width: auto;
+            border-radius: 8px;
+        }
+
+        .brand-name {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #8e8e93;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .display {
             text-align: right;
-            padding: 40px 10px;
-            color: white;
+            padding: 20px 0 30px 0;
+            color: var(--text);
         }
 
-        .result { font-size: 5rem; font-weight: 300; margin-bottom: 10px; }
+        .result { font-size: 4.5rem; font-weight: 300; overflow: hidden; }
 
-        /* The "Secret" Scientific Drawer */
-        .sci-drawer {
-            display: none; /* Hidden by default */
-            grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
-            margin-bottom: 12px;
+        /* Scientific Drawer Toggle */
+        .sci-toggle {
+            background: rgba(0,0,0,0.05);
+            border: none;
+            width: 100%;
             padding: 10px;
-            background: #222;
-            border-radius: 20px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            color: #666;
+            transition: 0.3s;
+        }
+        .sci-toggle.active { background: var(--accent); color: white; }
+
+        .sci-drawer {
+            display: none;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
         }
 
         .grid {
@@ -57,85 +94,75 @@
             gap: 12px;
         }
 
-        button {
+        button.key {
             aspect-ratio: 1;
             border-radius: 50%;
             border: none;
             font-size: 1.5rem;
             cursor: pointer;
-            transition: opacity 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            background: white;
+            transition: transform 0.1s, background 0.2s;
         }
 
-        button:active { opacity: 0.6; }
+        button.key:active { transform: scale(0.92); }
+        button.op { background: var(--accent); color: white; }
+        button.sci-btn { background: #e5e5ea; font-size: 1rem; aspect-ratio: 1.5; border-radius: 12px; }
+        button.gray { background: #d1d1d6; }
 
-        /* Button Colors */
-        .btn-num { background: var(--dark-gray); color: white; }
-        .btn-op { background: var(--orange); color: white; font-size: 1.8rem; }
-        .btn-top { background: var(--gray); color: black; }
-        .btn-sci { background: #222; color: #ff9f0a; font-size: 0.9rem; border: 1px solid #444; }
+        .zero { grid-column: span 2; aspect-ratio: auto; border-radius: 50px; justify-content: flex-start; padding-left: 25px; }
 
-        .zero { grid-column: span 2; aspect-ratio: auto; border-radius: 50px; justify-content: flex-start; padding-left: 30px; }
-
-        /* Scientific Toggle Button */
-        .sci-toggle {
-            width: 100%;
-            height: 40px;
-            border-radius: 20px;
-            background: #333;
-            color: #888;
-            margin-bottom: 20px;
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            border: none;
-            cursor: pointer;
+        /* Mobile Adjustments */
+        @media (max-width: 480px) {
+            .calculator { padding: 15px; border-radius: 20px; }
+            .result { font-size: 3.5rem; }
         }
-        .active-sci { color: var(--orange); border: 1px solid var(--orange); }
     </style>
 </head>
 <body>
 
-<div class="phone-container">
-    <button class="sci-toggle" id="toggle" onclick="toggleScientific()">Scientific Functions</button>
-    
+<div class="calculator">
+    <div class="brand-header">
+        <img src="logo.png" alt="Logo" class="logo">
+        <span class="brand-name">Dev Precision</span>
+    </div>
+
     <div class="display">
         <div class="result" id="res">0</div>
     </div>
 
+    <button class="sci-toggle" id="tgl" onclick="toggleSci()">Scientific Mode</button>
+
     <div class="sci-drawer" id="drawer">
-        <button class="btn-sci" onclick="sci('Math.sin(')">sin</button>
-        <button class="btn-sci" onclick="sci('Math.cos(')">cos</button>
-        <button class="btn-sci" onclick="sci('Math.sqrt(')">√</button>
-        <button class="btn-sci" onclick="sci('**2')">x²</button>
+        <button class="key sci-btn" onclick="sci('Math.sin(')">sin</button>
+        <button class="key sci-btn" onclick="sci('Math.cos(')">cos</button>
+        <button class="key sci-btn" onclick="sci('Math.sqrt(')">√</button>
+        <button class="key sci-btn" onclick="sci('**2')">x²</button>
     </div>
 
     <div class="grid">
-        <button class="btn-top" onclick="reset()">AC</button>
-        <button class="btn-top" onclick="del()">⌫</button>
-        <button class="btn-top" onclick="op('%')">%</button>
-        <button class="btn-op" onclick="op('/')">÷</button>
+        <button class="key gray" onclick="reset()">AC</button>
+        <button class="key gray" onclick="del()">⌫</button>
+        <button class="key gray" onclick="op('%')">%</button>
+        <button class="key op" onclick="op('/')">÷</button>
 
-        <button class="btn-num" onclick="num('7')">7</button>
-        <button class="btn-num" onclick="num('8')">8</button>
-        <button class="btn-num" onclick="num('9')">9</button>
-        <button class="btn-op" onclick="op('*')">×</button>
+        <button class="key" onclick="num('7')">7</button>
+        <button class="key" onclick="num('8')">8</button>
+        <button class="key" onclick="num('9')">9</button>
+        <button class="key op" onclick="op('*')">×</button>
 
-        <button class="btn-num" onclick="num('4')">4</button>
-        <button class="btn-num" onclick="num('5')">5</button>
-        <button class="btn-num" onclick="num('6')">6</button>
-        <button class="btn-op" onclick="op('-')">−</button>
+        <button class="key" onclick="num('4')">4</button>
+        <button class="key" onclick="num('5')">5</button>
+        <button class="key" onclick="num('6')">6</button>
+        <button class="key op" onclick="op('-')">−</button>
 
-        <button class="btn-num" onclick="num('1')">1</button>
-        <button class="btn-num" onclick="num('2')">2</button>
-        <button class="btn-num" onclick="num('3')">3</button>
-        <button class="btn-op" onclick="op('+')">+</button>
+        <button class="key" onclick="num('1')">1</button>
+        <button class="key" onclick="num('2')">2</button>
+        <button class="key" onclick="num('3')">3</button>
+        <button class="key op" onclick="op('+')">+</button>
 
-        <button class="btn-num zero" onclick="num('0')">0</button>
-        <button class="btn-num" onclick="num('.')">.</button>
-        <button class="btn-op" onclick="calculate()">=</button>
+        <button class="key zero" onclick="num('0')">0</button>
+        <button class="key" onclick="num('.')">.</button>
+        <button class="key op" onclick="calculate()">=</button>
     </div>
 </div>
 
@@ -143,12 +170,12 @@
     let current = '0';
     let buffer = '';
 
-    function toggleScientific() {
-        const drawer = document.getElementById('drawer');
-        const btn = document.getElementById('toggle');
-        const isOpen = drawer.style.display === 'grid';
-        drawer.style.display = isOpen ? 'none' : 'grid';
-        btn.classList.toggle('active-sci');
+    function toggleSci() {
+        const d = document.getElementById('drawer');
+        const t = document.getElementById('tgl');
+        const open = d.style.display === 'grid';
+        d.style.display = open ? 'none' : 'grid';
+        t.classList.toggle('active');
     }
 
     function num(v) {
@@ -169,18 +196,15 @@
 
     function calculate() {
         try {
-            let evalStr = (buffer + current).replace('×','*').replace('÷','/').replace('−','-');
-            current = String(eval(evalStr));
+            let res = eval((buffer + current).replace('×','*').replace('÷','/').replace('−','-'));
+            current = String(Number(res.toFixed(6)));
             buffer = '';
             document.getElementById('res').textContent = current;
-        } catch(e) { 
-            document.getElementById('res').textContent = "Error";
-            current = '0';
-        }
+        } catch(e) { document.getElementById('res').textContent = "Error"; current = '0'; }
     }
 
     function reset() { current = '0'; buffer = ''; document.getElementById('res').textContent = '0'; }
-    function del() { current = current.slice(0, -1) || '0'; document.getElementById('res').textContent = current; }
+    function del() { current = current.length > 1 ? current.slice(0,-1) : '0'; document.getElementById('res').textContent = current; }
 </script>
 
 </body>
