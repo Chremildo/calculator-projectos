@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora iPhone</title>
+    <title>Calculadora iPhone Pro</title>
     <style>
         :root {
             --ios-bg: #FFFFFF;
@@ -23,8 +23,8 @@
             min-height: 100vh;
         }
 
-        /* Fixed iPhone Frame */
-        .calculator {
+        /* Fixed iPhone Frame to prevent squashing */
+        .iphone-frame {
             width: 375px;
             height: 812px;
             background-color: var(--ios-bg);
@@ -34,12 +34,13 @@
             flex-direction: column;
             box-shadow: 0 30px 60px rgba(0,0,0,0.1);
             border: 1px solid #D1D1D6;
+            position: relative;
         }
 
         .header {
             display: flex;
-            align-items: center;
-            justify-content: space-between;
+            justify-content: center;
+            padding-top: 10px;
             margin-bottom: 5px;
         }
 
@@ -48,10 +49,10 @@
             height: 45px;
             border-radius: 50%;
             object-fit: cover;
-            border: 1px solid #D1D1D6;
+            border: 1px solid var(--ios-top);
         }
 
-        /* History Tape - Small gray text above current total */
+        /* History Tape: Small gray text for previous operations */
         .history-tape {
             flex: 1;
             display: flex;
@@ -62,26 +63,27 @@
             color: #8E8E93;
             font-size: 1.4rem;
             min-height: 60px;
+            overflow-y: auto;
         }
 
         .display {
             text-align: right;
-            padding: 0 10px 20px 10px;
+            padding: 0 10px 25px 10px;
             color: var(--ios-text);
             font-size: 6rem;
             font-weight: 300;
             letter-spacing: -3px;
-            line-height: 0.9;
+            line-height: 1;
         }
 
-        /* KEYPAD GRID: Precise Apple spacing */
+        /* KEYPAD: Exact Apple Spacing and Order */
         .grid {
             display: grid;
             grid-template-columns: repeat(4, 80px);
             grid-template-rows: repeat(5, 80px);
             gap: 12px;
             justify-content: center;
-            margin-bottom: 20px;
+            padding-bottom: 20px;
         }
 
         button {
@@ -95,19 +97,19 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: opacity 0.15s;
+            transition: opacity 0.1s;
         }
 
-        button:active { opacity: 0.5; }
+        button:active { opacity: 0.6; }
 
         .btn-num { background-color: var(--ios-num); color: black; }
         .btn-top { background-color: var(--ios-top); color: black; font-size: 1.8rem; }
         .btn-op  { background-color: var(--ios-orange); color: white; font-size: 2.6rem; }
 
-        /* The Zero Pill */
+        /* The Pill Shape Zero */
         .zero {
             grid-column: span 2;
-            width: 172px; /* 80+80+12 */
+            width: 172px; /* 80 + 80 + 12 gap */
             border-radius: 50px;
             justify-content: flex-start;
             padding-left: 32px;
@@ -116,7 +118,7 @@
 </head>
 <body>
 
-<div class="calculator">
+<div class="iphone-frame">
     <div class="header">
         <img src="cprofile.png" alt="Kevin" class="profile-pic">
     </div>
@@ -126,71 +128,76 @@
 
     <div class="grid">
         <button class="btn-top" onclick="cls()">AC</button>
-        <button class="btn-top" onclick="toggle()">+/-</button>
+        <button class="btn-top" onclick="toggleSign()">+/-</button>
         <button class="btn-top" onclick="pct()">%</button>
-        <button class="btn-op" onclick="op('/')">÷</button>
+        <button class="btn-op" onclick="setOp('/')">÷</button>
 
-        <button class="btn-num" onclick="num('7')">7</button>
-        <button class="btn-num" onclick="num('8')">8</button>
-        <button class="btn-num" onclick="num('9')">9</button>
-        <button class="btn-op" onclick="op('*')">×</button>
+        <button class="btn-num" onclick="addNum('7')">7</button>
+        <button class="btn-num" onclick="addNum('8')">8</button>
+        <button class="btn-num" onclick="addNum('9')">9</button>
+        <button class="btn-op" onclick="setOp('*')">×</button>
 
-        <button class="btn-num" onclick="num('4')">4</button>
-        <button class="btn-num" onclick="num('5')">5</button>
-        <button class="btn-num" onclick="num('6')">6</button>
-        <button class="btn-op" onclick="op('-')">−</button>
+        <button class="btn-num" onclick="addNum('4')">4</button>
+        <button class="btn-num" onclick="addNum('5')">5</button>
+        <button class="btn-num" onclick="addNum('6')">6</button>
+        <button class="btn-op" onclick="setOp('-')">−</button>
 
-        <button class="btn-num" onclick="num('1')">1</button>
-        <button class="btn-num" onclick="num('2')">2</button>
-        <button class="btn-num" onclick="num('3')">3</button>
-        <button class="btn-op" onclick="op('+')">+</button>
+        <button class="btn-num" onclick="addNum('1')">1</button>
+        <button class="btn-num" onclick="addNum('2')">2</button>
+        <button class="btn-num" onclick="addNum('3')">3</button>
+        <button class="btn-op" onclick="setOp('+')">+</button>
 
-        <button class="btn-num zero" onclick="num('0')">0</button>
-        <button class="btn-num" onclick="num('.')">,</button>
+        <button class="btn-num zero" onclick="addNum('0')">0</button>
+        <button class="btn-num" onclick="addNum('.')">,</button>
         <button class="btn-op" onclick="calc()">=</button>
     </div>
 </div>
 
 <script>
-    let cur = '0';
-    let buf = '';
-    const d = document.getElementById('res');
-    const h = document.getElementById('hist');
+    let current = '0';
+    let buffer = '';
+    const displayElement = document.getElementById('res');
+    const historyElement = document.getElementById('hist');
 
-    function num(n) {
-        if (cur === '0' && n !== '.') cur = n;
-        else cur += n;
-        d.textContent = cur;
+    function addNum(n) {
+        if (current === '0' && n !== '.') current = n;
+        else current += n;
+        displayElement.textContent = current;
     }
 
-    function op(s) {
-        buf += cur + ' ' + s + ' ';
-        h.textContent = buf;
-        cur = '0';
+    function setOp(op) {
+        buffer += current + ' ' + op + ' ';
+        historyElement.textContent = buffer;
+        current = '0';
     }
 
     function calc() {
         try {
-            let expr = buf + cur;
-            let result = eval(expr.replace('×','*').replace('÷','/').replace('−','-'));
-            h.innerHTML = `<div>${expr} =</div>`;
-            cur = String(Number(result.toFixed(8)));
-            d.textContent = cur;
-            buf = '';
-        } catch { d.textContent = "Error"; }
+            let expression = buffer + current;
+            let result = eval(expression.replace('×', '*').replace('÷', '/').replace('−', '-'));
+            historyElement.innerHTML = `<div>${expression} =</div>`;
+            current = String(Number(result.toFixed(8)));
+            displayElement.textContent = current;
+            buffer = '';
+        } catch { displayElement.textContent = "Error"; }
     }
 
-    function toggle() { 
-        cur = String(parseFloat(cur) * -1); 
-        d.textContent = cur; 
+    function toggleSign() {
+        current = String(parseFloat(current) * -1);
+        displayElement.textContent = current;
     }
 
-    function pct() { 
-        cur = String(parseFloat(cur) / 100); 
-        d.textContent = cur; 
+    function pct() {
+        current = String(parseFloat(current) / 100);
+        displayElement.textContent = current;
     }
 
-    function cls() { cur = '0'; buf = ''; d.textContent = '0'; h.textContent = ''; }
+    function cls() { 
+        current = '0'; 
+        buffer = ''; 
+        displayElement.textContent = '0'; 
+        historyElement.textContent = ''; 
+    }
 </script>
 
 </body>
