@@ -129,3 +129,83 @@
         <button class="sci-btn" onclick="inputNum(')')">)</button>
         <button class="sci-btn" onclick="inputNum('Math.PI')">π</button>
     </div>
+
+    <div class="grid">
+        <button class="gray" onclick="clearAll()">AC</button>
+        <button class="gray" onclick="clearLast()">⌫</button>
+        <button class="gray" onclick="inputOp('%')">%</button>
+        <button class="op" onclick="inputOp('/')">÷</button>
+
+        <button onclick="inputNum('7')">7</button>
+        <button onclick="inputNum('8')">8</button>
+        <button onclick="inputNum('9')">9</button>
+        <button class="op" onclick="inputOp('*')">×</button>
+
+        <button onclick="inputNum('4')">4</button>
+        <button onclick="inputNum('5')">5</button>
+        <button onclick="inputNum('6')">6</button>
+        <button class="op" onclick="inputOp('-')">−</button>
+
+        <button onclick="inputNum('1')">1</button>
+        <button onclick="inputNum('2')">2</button>
+        <button onclick="inputNum('3')">3</button>
+        <button class="op" onclick="inputOp('+')">+</button>
+
+        <button class="zero" onclick="inputNum('0')">0</button>
+        <button onclick="inputDot()">.</button>
+        <button class="op" onclick="calculate()">=</button>
+    </div>
+</div>
+
+<script>
+    let current = '0';
+    let fullExpr = '';
+    let isSci = false;
+
+    function toggleSci() {
+        const panel = document.getElementById('sciPanel');
+        const btn = document.getElementById('toggleBtn');
+        isSci = !isSci;
+        panel.style.display = isSci ? 'grid' : 'none';
+        btn.classList.toggle('active');
+        btn.textContent = isSci ? 'Standard Mode' : 'Scientific Mode';
+    }
+
+    function update() {
+        document.getElementById('result').textContent = current.replace('Math.PI', 'π');
+        document.getElementById('expr').textContent = fullExpr.replace(/Math\./g, '');
+    }
+
+    function inputNum(n) {
+        current = (current === '0') ? n : current + n;
+        update();
+    }
+
+    function inputSci(f) {
+        if(f === '**2') current += f;
+        else current = f + current + ')';
+        update();
+    }
+
+    function inputOp(o) {
+        fullExpr += current + ' ' + o + ' ';
+        current = '0';
+        update();
+    }
+
+    function calculate() {
+        try {
+            let res = eval((fullExpr + current).replace('×','*').replace('÷','/').replace('−','-'));
+            current = String(parseFloat(res.toFixed(6)));
+            fullExpr = '';
+            update();
+        } catch(e) { current = 'Error'; update(); }
+    }
+
+    function clearAll() { current = '0'; fullExpr = ''; update(); }
+    function clearLast() { current = current.length > 1 ? current.slice(0,-1) : '0'; update(); }
+    function inputDot() { if(!current.includes('.')) current += '.'; update(); }
+</script>
+
+</body>
+</html>
