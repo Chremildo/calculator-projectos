@@ -23,13 +23,13 @@
             min-height: 100vh;
         }
 
-        /* Fixed iPhone Frame to prevent squashing */
+        /* Fixed iPhone Frame */
         .iphone-frame {
             width: 375px;
             height: 812px;
             background-color: var(--ios-bg);
             border-radius: 50px;
-            padding: 25px;
+            padding: 20px 25px;
             display: flex;
             flex-direction: column;
             box-shadow: 0 30px 60px rgba(0,0,0,0.1);
@@ -37,22 +37,19 @@
             position: relative;
         }
 
-        .header {
+        /* Top Header with the 3 Dots */
+        .top-nav {
             display: flex;
-            justify-content: center;
-            padding-top: 10px;
-            margin-bottom: 5px;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            color: var(--ios-orange);
+            font-size: 1.4rem;
         }
 
-        .profile-pic {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 1px solid var(--ios-top);
-        }
+        .dots { cursor: pointer; letter-spacing: 2px; font-weight: bold; }
 
-        /* History Tape: Small gray text for previous operations */
+        /* History Tape */
         .history-tape {
             flex: 1;
             display: flex;
@@ -63,7 +60,6 @@
             color: #8E8E93;
             font-size: 1.4rem;
             min-height: 60px;
-            overflow-y: auto;
         }
 
         .display {
@@ -76,14 +72,14 @@
             line-height: 1;
         }
 
-        /* KEYPAD: Exact Apple Spacing and Order */
+        /* Keypad Grid */
         .grid {
             display: grid;
             grid-template-columns: repeat(4, 80px);
             grid-template-rows: repeat(5, 80px);
             gap: 12px;
             justify-content: center;
-            padding-bottom: 20px;
+            margin-bottom: 20px;
         }
 
         button {
@@ -106,21 +102,32 @@
         .btn-top { background-color: var(--ios-top); color: black; font-size: 1.8rem; }
         .btn-op  { background-color: var(--ios-orange); color: white; font-size: 2.6rem; }
 
-        /* The Pill Shape Zero */
         .zero {
             grid-column: span 2;
-            width: 172px; /* 80 + 80 + 12 gap */
+            width: 172px;
             border-radius: 50px;
             justify-content: flex-start;
             padding-left: 32px;
         }
+
+        /* Bottom Footer with Toggle Icon */
+        .footer-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 5px;
+            color: var(--ios-orange);
+            font-size: 1.5rem;
+        }
+
+        .calc-icon { font-size: 1.8rem; cursor: pointer; }
     </style>
 </head>
 <body>
 
 <div class="iphone-frame">
-    <div class="header">
-        <img src="cprofile.png" alt="Kevin" class="profile-pic">
+    <div class="top-nav">
+        <div style="width: 24px;"></div> <div class="dots">...</div>
     </div>
 
     <div class="history-tape" id="hist"></div>
@@ -150,6 +157,12 @@
         <button class="btn-num zero" onclick="addNum('0')">0</button>
         <button class="btn-num" onclick="addNum('.')">,</button>
         <button class="btn-op" onclick="calc()">=</button>
+    </div>
+
+    <div class="footer-nav">
+        <span class="calc-icon">⌨️</span>
+        <span style="font-size: 0.9rem; font-weight: 600;">Cremildo Isaias</span>
+        <span class="calc-icon">📋</span>
     </div>
 </div>
 
