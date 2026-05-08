@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cremildo Isaias | Pro Calc</title>
+    <title>Cremildo Isaias | Pro Scientific</title>
     <style>
         :root {
             --bg: #f2f2f7;
-            --calc-bg: rgba(255, 255, 255, 0.8);
+            --calc-bg: rgba(255, 255, 255, 0.85);
             --accent: #ff9f0a;
             --text: #1c1c1e;
+            --gray-btn: #e5e5ea;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, system-ui, sans-serif; }
@@ -20,63 +21,59 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            padding: 10px;
         }
 
-        /* Container that scales perfectly */
         .calculator {
             width: 100%;
-            max-width: 400px; /* Desktop width */
+            max-width: 380px;
             background: var(--calc-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-radius: 30px;
-            padding: 25px;
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border-radius: 40px;
+            padding: 20px;
             box-shadow: 0 40px 80px rgba(0,0,0,0.1);
             border: 1px solid rgba(255,255,255,0.5);
+            display: flex;
+            flex-direction: column;
         }
 
-        /* Your Logo Area */
+        /* Branding Section */
         .brand-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
         }
 
         .logo {
-            height: 40px; /* Adjust based on your image */
-            width: auto;
-            border-radius: 8px;
+            height: 45px;
+            width: 45px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
-        .brand-name {
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: #8e8e93;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
+        .brand-name { font-size: 0.75rem; font-weight: 700; color: #8e8e93; text-transform: uppercase; letter-spacing: 1.5px; }
 
-        .display {
-            text-align: right;
-            padding: 20px 0 30px 0;
-            color: var(--text);
-        }
+        /* Display Area */
+        .display { text-align: right; padding: 20px 5px; color: var(--text); }
+        .expr-preview { font-size: 1rem; color: #8e8e93; min-height: 1.2em; margin-bottom: 5px; }
+        .result { font-size: 4rem; font-weight: 300; overflow-x: auto; white-space: nowrap; }
 
-        .result { font-size: 4.5rem; font-weight: 300; overflow: hidden; }
-
-        /* Scientific Drawer Toggle */
+        /* Scientific Toggle */
         .sci-toggle {
-            background: rgba(0,0,0,0.05);
+            background: var(--gray-btn);
             border: none;
             width: 100%;
             padding: 10px;
-            border-radius: 12px;
-            margin-bottom: 15px;
+            border-radius: 15px;
+            margin-bottom: 12px;
             font-size: 0.75rem;
+            font-weight: 600;
             cursor: pointer;
-            color: #666;
+            color: #3a3a3c;
             transition: 0.3s;
         }
         .sci-toggle.active { background: var(--accent); color: white; }
@@ -85,64 +82,77 @@
             display: none;
             grid-template-columns: repeat(4, 1fr);
             gap: 10px;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
+            animation: slideDown 0.3s ease-out;
         }
 
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
-        }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 
+        /* Keypad Grid */
+        .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+        
         button.key {
             aspect-ratio: 1;
             border-radius: 50%;
             border: none;
             font-size: 1.5rem;
+            font-weight: 500;
             cursor: pointer;
             background: white;
             transition: transform 0.1s, background 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        button.key:active { transform: scale(0.92); }
+        button.key:active { transform: scale(0.9); filter: brightness(0.9); }
         button.op { background: var(--accent); color: white; }
-        button.sci-btn { background: #e5e5ea; font-size: 1rem; aspect-ratio: 1.5; border-radius: 12px; }
-        button.gray { background: #d1d1d6; }
-
+        button.top-row { background: #d1d1d6; font-size: 1.2rem; }
+        button.sci-btn { background: #e5e5ea; font-size: 0.95rem; border-radius: 12px; aspect-ratio: 1.5; }
         .zero { grid-column: span 2; aspect-ratio: auto; border-radius: 50px; justify-content: flex-start; padding-left: 25px; }
 
-        /* Mobile Adjustments */
-        @media (max-width: 480px) {
-            .calculator { padding: 15px; border-radius: 20px; }
-            .result { font-size: 3.5rem; }
+        /* History Section */
+        .history-box {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(0,0,0,0.08);
+            max-height: 100px;
+            overflow-y: auto;
         }
+        .history-title { font-size: 0.7rem; font-weight: 700; color: #aeaeb2; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 1px; }
+        .log-entry { font-size: 0.9rem; color: #636366; display: flex; justify-content: space-between; margin-bottom: 6px; padding: 0 5px; }
+
+        /* Scrollbar Styling */
+        .history-box::-webkit-scrollbar { width: 4px; }
+        .history-box::-webkit-scrollbar-thumb { background: #d1d1d6; border-radius: 10px; }
     </style>
 </head>
 <body>
 
 <div class="calculator">
     <div class="brand-header">
-        <img src="logo.png" alt="Logo" class="logo">
-        <span class="brand-name">Dev Precision</span>
+        <img src="cprofile.png" alt="Cremildo Isaias" class="logo" onerror="this.src='https://via.placeholder.com/45'">
+        <span class="brand-name">Cremildo Isaias</span>
     </div>
 
     <div class="display">
+        <div class="expr-preview" id="preview"></div>
         <div class="result" id="res">0</div>
     </div>
 
     <button class="sci-toggle" id="tgl" onclick="toggleSci()">Scientific Mode</button>
 
     <div class="sci-drawer" id="drawer">
-        <button class="key sci-btn" onclick="sci('Math.sin(')">sin</button>
-        <button class="key sci-btn" onclick="sci('Math.cos(')">cos</button>
-        <button class="key sci-btn" onclick="sci('Math.sqrt(')">√</button>
-        <button class="key sci-btn" onclick="sci('**2')">x²</button>
+        <button class="key sci-btn" onclick="inputSci('Math.sin(')">sin</button>
+        <button class="key sci-btn" onclick="inputSci('Math.cos(')">cos</button>
+        <button class="key sci-btn" onclick="inputSci('Math.sqrt(')">√</button>
+        <button class="key sci-btn" onclick="inputSci('**2')">x²</button>
     </div>
 
     <div class="grid">
-        <button class="key gray" onclick="reset()">AC</button>
-        <button class="key gray" onclick="del()">⌫</button>
-        <button class="key gray" onclick="op('%')">%</button>
+        <button class="key top-row" onclick="reset()">AC</button>
+        <button class="key top-row" onclick="del()">⌫</button>
+        <button class="key top-row" onclick="op('%')">%</button>
         <button class="key op" onclick="op('/')">÷</button>
 
         <button class="key" onclick="num('7')">7</button>
@@ -164,47 +174,103 @@
         <button class="key" onclick="num('.')">.</button>
         <button class="key op" onclick="calculate()">=</button>
     </div>
+
+    <div class="history-box">
+        <div class="history-title">Calculations History</div>
+        <div id="history-log"></div>
+    </div>
 </div>
 
 <script>
-    let current = '0';
-    let buffer = '';
+    let currentDisplay = '0';
+    let operationBuffer = '';
+    let isResultDisplayed = false;
 
     function toggleSci() {
-        const d = document.getElementById('drawer');
-        const t = document.getElementById('tgl');
-        const open = d.style.display === 'grid';
-        d.style.display = open ? 'none' : 'grid';
-        t.classList.toggle('active');
+        const drawer = document.getElementById('drawer');
+        const toggleBtn = document.getElementById('tgl');
+        const isCurrentlyOpen = drawer.style.display === 'grid';
+        drawer.style.display = isCurrentlyOpen ? 'none' : 'grid';
+        toggleBtn.classList.toggle('active');
+        toggleBtn.textContent = isCurrentlyOpen ? 'Scientific Mode' : 'Close Scientific Mode';
     }
 
-    function num(v) {
-        current = (current === '0') ? v : current + v;
-        document.getElementById('res').textContent = current;
+    function num(val) {
+        if (currentDisplay === '0' || isResultDisplayed) {
+            currentDisplay = val;
+            isResultDisplayed = false;
+        } else {
+            currentDisplay += val;
+        }
+        updateUI();
     }
 
-    function op(s) {
-        buffer += current + s;
-        current = '0';
+    function op(symbol) {
+        operationBuffer = currentDisplay + ' ' + symbol + ' ';
+        currentDisplay = '0';
+        updateUI();
     }
 
-    function sci(f) {
-        if(f === '**2') current += f;
-        else current = f + current + ')';
+    function inputSci(func) {
+        let visualExpr = '';
+        if(func === '**2') visualExpr = `(${currentDisplay})²`; 
+        else visualExpr = func.replace('Math.', '') + currentDisplay + ')';
+        
+        currentDisplay = visualExpr;
         calculate();
     }
 
     function calculate() {
         try {
-            let res = eval((buffer + current).replace('×','*').replace('÷','/').replace('−','-'));
-            current = String(Number(res.toFixed(6)));
-            buffer = '';
-            document.getElementById('res').textContent = current;
-        } catch(e) { document.getElementById('res').textContent = "Error"; current = '0'; }
+            let expressionToEval = (operationBuffer + currentDisplay)
+                .replace(/×/g, '*')
+                .replace(/÷/g, '/')
+                .replace(/−/g, '-')
+                .replace(/²/g, '**2')
+                .replace(/sin/g, 'Math.sin')
+                .replace(/cos/g, 'Math.cos')
+                .replace(/√/g, 'Math.sqrt');
+
+            let result = eval(expressionToEval);
+            let formattedResult = Number(result.toFixed(6));
+            
+            // Add to History UI
+            const historyLog = document.getElementById('history-log');
+            const newEntry = document.createElement('div');
+            newEntry.className = 'log-entry';
+            newEntry.innerHTML = `<span>${operationBuffer + currentDisplay}</span><strong>${formattedResult}</strong>`;
+            historyLog.prepend(newEntry);
+
+            currentDisplay = String(formattedResult);
+            operationBuffer = '';
+            isResultDisplayed = true;
+            updateUI();
+        } catch(e) {
+            document.getElementById('res').textContent = "Error";
+            currentDisplay = '0';
+        }
     }
 
-    function reset() { current = '0'; buffer = ''; document.getElementById('res').textContent = '0'; }
-    function del() { current = current.length > 1 ? current.slice(0,-1) : '0'; document.getElementById('res').textContent = current; }
+    function updateUI() {
+        document.getElementById('res').textContent = currentDisplay;
+        document.getElementById('preview').textContent = operationBuffer;
+    }
+
+    function reset() {
+        currentDisplay = '0';
+        operationBuffer = '';
+        isResultDisplayed = false;
+        updateUI();
+    }
+
+    function del() {
+        if (currentDisplay.length > 1) {
+            currentDisplay = currentDisplay.slice(0, -1);
+        } else {
+            currentDisplay = '0';
+        }
+        updateUI();
+    }
 </script>
 
 </body>
