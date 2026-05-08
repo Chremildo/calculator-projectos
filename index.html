@@ -3,17 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cremildo Isaias | Pro Calc</title>
+    <title>Calculadora</title>
     <style>
         :root {
-            --bg: #000000;
-            --btn-num: #333333;
+            --bg-color: #000000;
+            --btn-number: #333333;
             --btn-top: #a5a5a5;
-            --accent: #ff9f0a;
-            --text: #ffffff;
+            --btn-accent: #ff9f0a;
+            --text-white: #ffffff;
+            --text-black: #000000;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, sans-serif; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", Helvetica, sans-serif;
+        }
 
         body {
             background-color: #1c1c1e;
@@ -21,149 +27,135 @@
             align-items: center;
             justify-content: center;
             min-height: 100vh;
-            margin: 0;
         }
 
-        /* Fixed Width: Stops the horizontal stretching */
-        .calculator {
-            width: 350px; 
-            background: var(--bg);
+        .iphone-frame {
+            width: 375px;
+            background-color: var(--bg-color);
             border-radius: 40px;
             padding: 20px;
-            border: 1px solid #333;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
         }
 
+        /* Profile & Branding Header */
         .header {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            margin-bottom: 10px;
+            padding: 10px 10px 0;
         }
 
-        .logo {
-            width: 50px;
-            height: 50px;
+        .profile-img {
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             object-fit: cover;
-            border: 1px solid #444;
+            border: 1px solid #333;
+            margin-right: 12px;
         }
 
-        .brand { font-size: 0.65rem; color: #8e8e93; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; }
+        .brand-text {
+            color: #8e8e93;
+            font-size: 0.8rem;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
 
+        /* Display */
         .display {
+            padding: 40px 15px 10px;
             text-align: right;
-            padding: 20px 5px;
-            color: white;
-            min-height: 140px;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
+            color: var(--text-white);
         }
 
-        .result { font-size: 4.5rem; font-weight: 300; letter-spacing: -2px; line-height: 1; overflow: hidden; }
+        .result {
+            font-size: 5.5rem;
+            font-weight: 300;
+            line-height: 1;
+            letter-spacing: -2px;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
 
-        .sci-toggle {
-            width: 100%;
-            padding: 10px;
-            background: #222;
-            color: var(--accent);
+        /* Scientific Row (Subtle & Integrated) */
+        .sci-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 12px;
+            padding: 0 10px;
+        }
+
+        .sci-btn {
+            background: #1c1c1e;
+            color: var(--text-white);
             border: none;
-            border-radius: 12px;
-            margin-bottom: 15px;
-            font-size: 0.75rem;
+            border-radius: 15px;
+            padding: 8px;
+            font-size: 0.9rem;
             cursor: pointer;
         }
 
-        .sci-drawer {
-            display: none;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
-            margin-bottom: 15px;
-        }
-
-        /* The Grid Fix: Fixed 72px columns */
+        /* Main Keypad */
         .grid {
             display: grid;
-            grid-template-columns: repeat(4, 72px); 
-            justify-content: center;
+            grid-template-columns: repeat(4, 1fr);
             gap: 12px;
+            padding: 10px;
         }
 
-        button {
-            width: 72px;
-            height: 72px;
-            border-radius: 50%;
+        button.key {
+            aspect-ratio: 1;
             border: none;
-            font-size: 1.7rem;
-            font-weight: 500;
+            border-radius: 50%;
+            font-size: 2rem;
+            font-weight: 400;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: filter 0.2s;
+            transition: opacity 0.15s;
         }
 
-        button:active { filter: brightness(1.4); }
+        button.key:active {
+            opacity: 0.7;
+        }
 
-        .num { background: var(--btn-num); color: white; }
-        .op { background: var(--accent); color: white; font-size: 2.2rem; }
-        .top { background: var(--btn-top); color: black; }
-        .sci { background: #222; color: var(--accent); font-size: 1rem; border-radius: 15px; }
+        .num { background-color: var(--btn-number); color: var(--text-white); }
+        .top { background-color: var(--btn-top); color: var(--text-black); font-size: 1.6rem; }
+        .op  { background-color: var(--btn-accent); color: var(--text-white); font-size: 2.2rem; }
 
-        /* The Zero Fix: Exactly two buttons + one gap wide */
+        /* The Apple Zero: Wide pill shape */
         .zero {
             grid-column: span 2;
-            width: 156px; 
-            border-radius: 40px;
+            aspect-ratio: auto;
+            border-radius: 50px;
             justify-content: flex-start;
-            padding-left: 28px;
+            padding-left: 32px;
         }
 
+        /* Hidden History Log (Bottom) */
         .history {
-            margin-top: 20px;
-            height: 80px;
+            margin-top: 15px;
+            height: 40px;
             overflow-y: auto;
-            border-top: 1px solid #222;
-            padding: 10px 5px;
-            color: #666;
-            font-size: 0.85rem;
-            line-height: 1.4;
+            font-size: 0.75rem;
+            color: #48484a;
+            text-align: center;
+            padding: 0 10px;
         }
     </style>
 </head>
 <body>
 
-<div class="calculator">
+<div class="iphone-frame">
     <div class="header">
-        <img src="cprofile.png" alt="Cremildo" class="logo">
-        <span class="brand">Dev Precision</span>
+        <img src="cprofile.png" alt="Kevin" class="profile-img">
+        <span class="brand-text">Cremildo Isaias</span>
     </div>
 
     <div class="display">
-        <div class="result" id="res">0</div>
+        <div class="result" id="display">0</div>
     </div>
 
-    <button class="sci-toggle" onclick="toggleSci()">Scientific Tools</button>
-
-    <div class="sci-drawer" id="drawer">
-        <button class="sci" onclick="sci('Math.sin(')">sin</button>
-        <button class="sci" onclick="sci('Math.cos(')">cos</button>
-        <button class="sci" onclick="sci('Math.sqrt(')">√</button>
-        <button class="sci" onclick="sci('**2')">x²</button>
-    </div>
-
-    <div class="grid">
-        <button class="top" onclick="reset()">AC</button>
-        <button class="top" onclick="del()">⌫</button>
-        <button class="top" onclick="addOp('%')">%</button>
-        <button class="op" onclick="addOp('/')">÷</button>
-
-        <button class="num" onclick="add('7')">7</button>
-        <button class="num" onclick="add('8')">8</button>
-        <button class="num" onclick="add('9')">9</button>
-        <button class="op" onclick="addOp('*')">×</button>
-
-        <button class="num" onclick="add('4')">4</button>
-        <button class="num" onclick="add('5')">5</button>
-        <button
+    <div class="sci-row">
+        <button class="sci-btn" onclick="sci('Math.sin')">sin</
