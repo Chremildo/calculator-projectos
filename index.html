@@ -3,65 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Apple Style Pro</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <title>Original Pro Calculator</title>
     <style>
         :root {
-            --bg: #f2f2f7;
-            --glass: rgba(255, 255, 255, 0.85);
-            --text: #1c1c1e;
-            --accent: #ff9f0a;
-            --btn-gray: rgba(0, 0, 0, 0.05);
+            --bg: #000000; /* Apple's dark mode calculator base */
+            --text: #ffffff;
+            --orange: #ff9f0a;
+            --gray: #a5a5a5;
+            --dark-gray: #333333;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
 
         body {
-            background: var(--bg);
-            min-height: 100vh;
+            background-color: #1c1c1e;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            min-height: 100vh;
         }
 
-        .phone-frame {
-            width: 100%;
-            max-width: 375px; /* Actual iPhone width */
-            background: var(--glass);
-            backdrop-filter: blur(30px);
-            -webkit-backdrop-filter: blur(30px);
+        .phone-container {
+            width: 350px;
+            background: var(--bg);
             border-radius: 40px;
-            border: 1px solid rgba(255,255,255,0.5);
-            padding: 24px;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.1);
-            overflow: hidden;
+            padding: 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            border: 1px solid #444;
         }
 
         .display {
             text-align: right;
-            padding: 40px 10px 20px 10px;
+            padding: 40px 10px;
+            color: white;
         }
 
-        .expr { font-size: 1rem; color: #8e8e93; min-height: 1.2em; margin-bottom: 5px; }
-        .result { font-size: 4rem; font-weight: 300; color: var(--text); letter-spacing: -2px; }
+        .result { font-size: 5rem; font-weight: 300; margin-bottom: 10px; }
 
-        /* Scientific Panel (Hidden by default) */
-        .sci-panel {
-            display: none; /* Toggle this with JS */
+        /* The "Secret" Scientific Drawer */
+        .sci-drawer {
+            display: none; /* Hidden by default */
             grid-template-columns: repeat(4, 1fr);
             gap: 12px;
             margin-bottom: 12px;
-            padding: 15px;
-            background: rgba(0,0,0,0.03);
+            padding: 10px;
+            background: #222;
             border-radius: 20px;
-            animation: slideIn 0.3s ease;
-        }
-
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
         }
 
         .grid {
@@ -74,137 +61,126 @@
             aspect-ratio: 1;
             border-radius: 50%;
             border: none;
-            font-size: 1.4rem;
-            font-weight: 500;
+            font-size: 1.5rem;
             cursor: pointer;
-            transition: all 0.2s;
-            background: white;
-            color: var(--text);
+            transition: opacity 0.2s;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
-        button:active { transform: scale(0.9); filter: brightness(0.9); }
+        button:active { opacity: 0.6; }
 
-        /* Scientific Toggle Style */
-        .mode-toggle {
+        /* Button Colors */
+        .btn-num { background: var(--dark-gray); color: white; }
+        .btn-op { background: var(--orange); color: white; font-size: 1.8rem; }
+        .btn-top { background: var(--gray); color: black; }
+        .btn-sci { background: #222; color: #ff9f0a; font-size: 0.9rem; border: 1px solid #444; }
+
+        .zero { grid-column: span 2; aspect-ratio: auto; border-radius: 50px; justify-content: flex-start; padding-left: 30px; }
+
+        /* Scientific Toggle Button */
+        .sci-toggle {
             width: 100%;
-            aspect-ratio: auto;
             height: 40px;
             border-radius: 20px;
-            font-size: 0.8rem;
+            background: #333;
+            color: #888;
+            margin-bottom: 20px;
+            font-size: 0.7rem;
             text-transform: uppercase;
             letter-spacing: 1px;
-            background: var(--btn-gray);
-            margin-bottom: 20px;
-            color: #8e8e93;
+            border: none;
+            cursor: pointer;
         }
-
-        .mode-toggle.active { background: var(--accent); color: white; }
-
-        button.op { background: var(--accent); color: white; }
-        button.gray { background: var(--btn-gray); }
-        button.sci-btn { font-size: 1rem; background: #e5e5ea; }
-        .zero { grid-column: span 2; aspect-ratio: auto; border-radius: 40px; justify-content: flex-start; padding-left: 25px; }
+        .active-sci { color: var(--orange); border: 1px solid var(--orange); }
     </style>
 </head>
 <body>
 
-<div class="phone-frame">
-    <button class="mode-toggle" id="toggleBtn" onclick="toggleSci()">Scientific Mode</button>
-
+<div class="phone-container">
+    <button class="sci-toggle" id="toggle" onclick="toggleScientific()">Scientific Functions</button>
+    
     <div class="display">
-        <div class="expr" id="expr"></div>
-        <div class="result" id="result">0</div>
+        <div class="result" id="res">0</div>
     </div>
 
-    <div class="sci-panel" id="sciPanel">
-        <button class="sci-btn" onclick="inputSci('Math.sin(')">sin</button>
-        <button class="sci-btn" onclick="inputSci('Math.cos(')">cos</button>
-        <button class="sci-btn" onclick="inputSci('Math.tan(')">tan</button>
-        <button class="sci-btn" onclick="inputSci('Math.sqrt(')">√</button>
-        <button class="sci-btn" onclick="inputSci('**2')">x²</button>
-        <button class="sci-btn" onclick="inputNum('(')">(</button>
-        <button class="sci-btn" onclick="inputNum(')')">)</button>
-        <button class="sci-btn" onclick="inputNum('Math.PI')">π</button>
+    <div class="sci-drawer" id="drawer">
+        <button class="btn-sci" onclick="sci('Math.sin(')">sin</button>
+        <button class="btn-sci" onclick="sci('Math.cos(')">cos</button>
+        <button class="btn-sci" onclick="sci('Math.sqrt(')">√</button>
+        <button class="btn-sci" onclick="sci('**2')">x²</button>
     </div>
 
     <div class="grid">
-        <button class="gray" onclick="clearAll()">AC</button>
-        <button class="gray" onclick="clearLast()">⌫</button>
-        <button class="gray" onclick="inputOp('%')">%</button>
-        <button class="op" onclick="inputOp('/')">÷</button>
+        <button class="btn-top" onclick="reset()">AC</button>
+        <button class="btn-top" onclick="del()">⌫</button>
+        <button class="btn-top" onclick="op('%')">%</button>
+        <button class="btn-op" onclick="op('/')">÷</button>
 
-        <button onclick="inputNum('7')">7</button>
-        <button onclick="inputNum('8')">8</button>
-        <button onclick="inputNum('9')">9</button>
-        <button class="op" onclick="inputOp('*')">×</button>
+        <button class="btn-num" onclick="num('7')">7</button>
+        <button class="btn-num" onclick="num('8')">8</button>
+        <button class="btn-num" onclick="num('9')">9</button>
+        <button class="btn-op" onclick="op('*')">×</button>
 
-        <button onclick="inputNum('4')">4</button>
-        <button onclick="inputNum('5')">5</button>
-        <button onclick="inputNum('6')">6</button>
-        <button class="op" onclick="inputOp('-')">−</button>
+        <button class="btn-num" onclick="num('4')">4</button>
+        <button class="btn-num" onclick="num('5')">5</button>
+        <button class="btn-num" onclick="num('6')">6</button>
+        <button class="btn-op" onclick="op('-')">−</button>
 
-        <button onclick="inputNum('1')">1</button>
-        <button onclick="inputNum('2')">2</button>
-        <button onclick="inputNum('3')">3</button>
-        <button class="op" onclick="inputOp('+')">+</button>
+        <button class="btn-num" onclick="num('1')">1</button>
+        <button class="btn-num" onclick="num('2')">2</button>
+        <button class="btn-num" onclick="num('3')">3</button>
+        <button class="btn-op" onclick="op('+')">+</button>
 
-        <button class="zero" onclick="inputNum('0')">0</button>
-        <button onclick="inputDot()">.</button>
-        <button class="op" onclick="calculate()">=</button>
+        <button class="btn-num zero" onclick="num('0')">0</button>
+        <button class="btn-num" onclick="num('.')">.</button>
+        <button class="btn-op" onclick="calculate()">=</button>
     </div>
 </div>
 
 <script>
     let current = '0';
-    let fullExpr = '';
-    let isSci = false;
+    let buffer = '';
 
-    function toggleSci() {
-        const panel = document.getElementById('sciPanel');
-        const btn = document.getElementById('toggleBtn');
-        isSci = !isSci;
-        panel.style.display = isSci ? 'grid' : 'none';
-        btn.classList.toggle('active');
-        btn.textContent = isSci ? 'Standard Mode' : 'Scientific Mode';
+    function toggleScientific() {
+        const drawer = document.getElementById('drawer');
+        const btn = document.getElementById('toggle');
+        const isOpen = drawer.style.display === 'grid';
+        drawer.style.display = isOpen ? 'none' : 'grid';
+        btn.classList.toggle('active-sci');
     }
 
-    function update() {
-        document.getElementById('result').textContent = current.replace('Math.PI', 'π');
-        document.getElementById('expr').textContent = fullExpr.replace(/Math\./g, '');
+    function num(v) {
+        current = (current === '0') ? v : current + v;
+        document.getElementById('res').textContent = current;
     }
 
-    function inputNum(n) {
-        current = (current === '0') ? n : current + n;
-        update();
+    function op(s) {
+        buffer += current + s;
+        current = '0';
     }
 
-    function inputSci(f) {
+    function sci(f) {
         if(f === '**2') current += f;
         else current = f + current + ')';
-        update();
-    }
-
-    function inputOp(o) {
-        fullExpr += current + ' ' + o + ' ';
-        current = '0';
-        update();
+        calculate();
     }
 
     function calculate() {
         try {
-            let res = eval((fullExpr + current).replace('×','*').replace('÷','/').replace('−','-'));
-            current = String(parseFloat(res.toFixed(6)));
-            fullExpr = '';
-            update();
-        } catch(e) { current = 'Error'; update(); }
+            let evalStr = (buffer + current).replace('×','*').replace('÷','/').replace('−','-');
+            current = String(eval(evalStr));
+            buffer = '';
+            document.getElementById('res').textContent = current;
+        } catch(e) { 
+            document.getElementById('res').textContent = "Error";
+            current = '0';
+        }
     }
 
-    function clearAll() { current = '0'; fullExpr = ''; update(); }
-    function clearLast() { current = current.length > 1 ? current.slice(0,-1) : '0'; update(); }
-    function inputDot() { if(!current.includes('.')) current += '.'; update(); }
+    function reset() { current = '0'; buffer = ''; document.getElementById('res').textContent = '0'; }
+    function del() { current = current.slice(0, -1) || '0'; document.getElementById('res').textContent = current; }
 </script>
 
 </body>
