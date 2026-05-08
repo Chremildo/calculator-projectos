@@ -3,67 +3,81 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Premium Scientific</title>
+    <title>Apple Style Pro</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-gradient: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
-            --glass-bg: rgba(255, 255, 255, 0.8);
-            --glass-border: rgba(255, 255, 255, 0.6);
+            --bg: #f2f2f7;
+            --glass: rgba(255, 255, 255, 0.85);
+            --text: #1c1c1e;
             --accent: #ff9f0a;
-            --text: #1d1d1f;
             --btn-gray: rgba(0, 0, 0, 0.05);
-            --shadow: 0 40px 80px rgba(0, 0, 0, 0.1);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
 
         body {
-            background: var(--bg-gradient);
+            background: var(--bg);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 10px;
+            padding: 20px;
         }
 
-        /* Fixed Width Container for Stability */
-        .calc-frame {
+        .phone-frame {
             width: 100%;
-            max-width: 480px;
-            background: var(--glass-bg);
-            backdrop-filter: blur(40px);
-            -webkit-backdrop-filter: blur(40px);
+            max-width: 375px; /* Actual iPhone width */
+            background: var(--glass);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
             border-radius: 40px;
-            border: 1.5px solid var(--glass-border);
-            padding: 30px;
-            box-shadow: var(--shadow);
+            border: 1px solid rgba(255,255,255,0.5);
+            padding: 24px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.1);
+            overflow: hidden;
         }
 
         .display {
             text-align: right;
-            padding: 20px 10px 40px 10px;
+            padding: 40px 10px 20px 10px;
         }
 
-        .expr { font-size: 1rem; color: #86868b; min-height: 1.5em; letter-spacing: 0.5px; }
-        .result { font-size: 4.5rem; font-weight: 300; color: var(--text); letter-spacing: -2px; }
+        .expr { font-size: 1rem; color: #8e8e93; min-height: 1.2em; margin-bottom: 5px; }
+        .result { font-size: 4rem; font-weight: 300; color: var(--text); letter-spacing: -2px; }
 
-        /* Grid uses auto-layout to avoid squashing */
+        /* Scientific Panel (Hidden by default) */
+        .sci-panel {
+            display: none; /* Toggle this with JS */
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 12px;
+            padding: 15px;
+            background: rgba(0,0,0,0.03);
+            border-radius: 20px;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         .grid {
             display: grid;
-            grid-template-columns: repeat(5, 1fr);
+            grid-template-columns: repeat(4, 1fr);
             gap: 12px;
         }
 
         button {
-            height: 60px; /* Uniform height for all buttons */
-            border-radius: 18px; /* High-end rounded look instead of circles */
+            aspect-ratio: 1;
+            border-radius: 50%;
             border: none;
-            font-size: 1.1rem;
+            font-size: 1.4rem;
             font-weight: 500;
             cursor: pointer;
-            transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.2s;
             background: white;
             color: var(--text);
             display: flex;
@@ -71,33 +85,47 @@
             justify-content: center;
         }
 
-        button:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.05); background: #fdfdfd; }
-        button:active { transform: scale(0.95); filter: brightness(0.95); }
+        button:active { transform: scale(0.9); filter: brightness(0.9); }
 
-        /* Color States */
-        button.op { background: var(--accent); color: white; font-size: 1.5rem; }
-        button.sci { background: var(--btn-gray); color: #555; font-size: 0.9rem; }
-        button.ac { color: #ff3b30; }
+        /* Scientific Toggle Style */
+        .mode-toggle {
+            width: 100%;
+            aspect-ratio: auto;
+            height: 40px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            background: var(--btn-gray);
+            margin-bottom: 20px;
+            color: #8e8e93;
+        }
 
-        /* Double-wide items */
-        .span-2 { grid-column: span 2; }
+        .mode-toggle.active { background: var(--accent); color: white; }
+
+        button.op { background: var(--accent); color: white; }
+        button.gray { background: var(--btn-gray); }
+        button.sci-btn { font-size: 1rem; background: #e5e5ea; }
+        .zero { grid-column: span 2; aspect-ratio: auto; border-radius: 40px; justify-content: flex-start; padding-left: 25px; }
     </style>
 </head>
 <body>
 
-<div class="calc-frame">
+<div class="phone-frame">
+    <button class="mode-toggle" id="toggleBtn" onclick="toggleSci()">Scientific Mode</button>
+
     <div class="display">
         <div class="expr" id="expr"></div>
         <div class="result" id="result">0</div>
     </div>
 
-    <div class="grid">
-        <button class="sci" onclick="inputSci('Math.sin(')">sin</button>
-        <button class="sci" onclick="inputSci('Math.cos(')">cos</button>
-        <button class="sci" onclick="inputSci('Math.tan(')">tan</button>
-        <button class="sci" onclick="inputSci('Math.log10(')">log</button>
-        <button class="sci" onclick="inputNum('Math.PI')">π</button>
-
-        <button class="sci" onclick="inputSci('Math.sqrt(')">√</button>
-        <button class="sci" onclick="inputSci('**2')">x²</button>
-        <button class="sci" onclick="inputNum('(')">(</button>
+    <div class="sci-panel" id="sciPanel">
+        <button class="sci-btn" onclick="inputSci('Math.sin(')">sin</button>
+        <button class="sci-btn" onclick="inputSci('Math.cos(')">cos</button>
+        <button class="sci-btn" onclick="inputSci('Math.tan(')">tan</button>
+        <button class="sci-btn" onclick="inputSci('Math.sqrt(')">√</button>
+        <button class="sci-btn" onclick="inputSci('**2')">x²</button>
+        <button class="sci-btn" onclick="inputNum('(')">(</button>
+        <button class="sci-btn" onclick="inputNum(')')">)</button>
+        <button class="sci-btn" onclick="inputNum('Math.PI')">π</button>
+    </div>
