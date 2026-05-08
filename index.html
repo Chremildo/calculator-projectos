@@ -3,74 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cremildo Isaias | Pro Calc</title>
+    <title>Dev Precision | Premium Calc</title>
     <style>
         :root {
-            --bg: #1c1c1e;
+            --bg: #000000;
+            --btn-gray: #333333;
+            --btn-light: #a5a5a5;
             --accent: #ff9f0a;
-            --num-btn: #333333;
-            --top-btn: #a5a5a5;
             --text: #ffffff;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, system-ui, sans-serif; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, sans-serif; }
 
         body {
-            background-color: #000;
+            background-color: #1c1c1e;
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 10px;
+            padding: 20px;
         }
 
         .calculator {
-            width: 100%;
-            max-width: 380px;
-            background: #000;
-            border-radius: 40px;
-            padding: 20px;
-            border: 1px solid #333;
+            width: 360px; /* Locked width to stop horizontal stretching */
+            background: var(--bg);
+            border-radius: 45px;
+            padding: 25px;
+            border: 1px solid #2c2c2e;
+            box-shadow: 0 50px 100px rgba(0,0,0,0.5);
         }
 
-        /* Branding Area */
-        .brand-header {
+        /* Branding */
+        .header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
         }
-
         .logo {
-            height: 45px;
-            width: 45px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
             object-fit: cover;
-            border: 2px solid #333;
+            border: 2px solid var(--btn-gray);
         }
+        .brand { font-size: 0.7rem; color: #8e8e93; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; }
 
-        .brand-name { font-size: 0.7rem; color: #8e8e93; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; }
+        /* Display */
+        .display { text-align: right; padding: 30px 10px; color: var(--text); }
+        .result { font-size: 5rem; font-weight: 300; overflow: hidden; letter-spacing: -2px; }
 
-        .display { text-align: right; padding: 20px 10px; color: white; margin-bottom: 10px; }
-        .result { font-size: 5rem; font-weight: 300; overflow: hidden; }
-
-        /* Scientific Drawer (Aligned 4-cols to match numbers) */
-        .sci-drawer {
-            display: none;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
-            margin-bottom: 12px;
-            animation: fadeIn 0.3s ease;
-        }
-
+        /* Buttons Grid - THE FIX */
         .grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(4, 1fr); /* 4 perfect equal columns */
             gap: 12px;
         }
 
         button {
-            aspect-ratio: 1;
+            aspect-ratio: 1 / 1; /* FORCE PERFECTION */
             border-radius: 50%;
             border: none;
             font-size: 1.6rem;
@@ -79,120 +70,125 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: brightness 0.2s;
+            transition: filter 0.2s;
         }
 
         button:active { filter: brightness(1.5); }
 
-        .btn-num { background: var(--num-btn); color: white; }
-        .btn-op { background: var(--accent); color: white; font-size: 2rem; }
-        .btn-top { background: var(--top-btn); color: black; }
-        .btn-sci { background: #222; color: var(--accent); font-size: 1rem; }
+        .num { background: var(--btn-gray); color: white; }
+        .op { background: var(--accent); color: white; font-size: 2rem; }
+        .top { background: var(--btn-light); color: black; }
+        .sci-btn { background: #1c1c1e; color: var(--accent); font-size: 1rem; border: 1px solid #333; }
 
-        .zero { grid-column: span 2; aspect-ratio: auto; border-radius: 50px; justify-content: flex-start; padding-left: 30px; }
-
-        .mode-btn {
-            width: 100%;
-            height: 40px;
-            border-radius: 20px;
-            background: #222;
-            color: #888;
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 15px;
-            border: 1px solid #333;
-            cursor: pointer;
+        .zero {
+            grid-column: span 2;
+            aspect-ratio: auto; /* Zero needs to be wide */
+            height: 72px; /* Matches the height of the circular buttons */
+            border-radius: 50px;
+            justify-content: flex-start;
+            padding-left: 28px;
         }
 
-        .history-log {
+        /* History & Sci Drawer */
+        .sci-drawer {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out, margin 0.3s;
+        }
+        .sci-drawer.open { max-height: 100px; margin-bottom: 12px; }
+
+        .history {
             margin-top: 20px;
-            padding: 15px;
-            border-top: 1px solid #222;
-            max-height: 100px;
+            height: 80px;
             overflow-y: auto;
+            border-top: 1px solid #222;
+            padding-top: 10px;
             color: #666;
             font-size: 0.8rem;
+            line-height: 1.5;
         }
 
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .sci-toggle {
+            width: 100%;
+            padding: 8px;
+            background: transparent;
+            color: #8e8e93;
+            border: 1px solid #333;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+        }
     </style>
 </head>
 <body>
 
 <div class="calculator">
-    <div class="brand-header">
-        <img src="cprofile.png" alt="Logo" class="logo">
-        <span class="brand-name">Dev Precision</span>
+    <div class="header">
+        <img src="cprofile.png" alt="Cremildo" class="logo">
+        <span class="brand">Cremildo Isaias</span>
     </div>
 
     <div class="display">
         <div class="result" id="res">0</div>
     </div>
 
-    <button class="mode-btn" onclick="toggleSci()">Scientific Tools</button>
+    <button class="sci-toggle" onclick="document.getElementById('sci').classList.toggle('open')">Scientific Tools</button>
 
-    <div class="sci-drawer" id="drawer">
-        <button class="btn-sci" onclick="sci('Math.sin(')">sin</button>
-        <button class="btn-sci" onclick="sci('Math.cos(')">cos</button>
-        <button class="btn-sci" onclick="sci('Math.sqrt(')">√</button>
-        <button class="btn-sci" onclick="sci('**2')">x²</button>
+    <div class="sci-drawer" id="sci">
+        <button class="sci-btn" onclick="sciOp('Math.sin(')">sin</button>
+        <button class="sci-btn" onclick="sciOp('Math.cos(')">cos</button>
+        <button class="sci-btn" onclick="sciOp('Math.sqrt(')">√</button>
+        <button class="sci-btn" onclick="sciOp('**2')">x²</button>
     </div>
 
     <div class="grid">
-        <button class="btn-top" onclick="reset()">AC</button>
-        <button class="btn-top" onclick="del()">⌫</button>
-        <button class="btn-top" onclick="setOp('%')">%</button>
-        <button class="btn-op" onclick="setOp('/')">÷</button>
+        <button class="top" onclick="reset()">AC</button>
+        <button class="top" onclick="del()">⌫</button>
+        <button class="top" onclick="addOp('%')">%</button>
+        <button class="op" onclick="addOp('/')">÷</button>
 
-        <button class="btn-num" onclick="add('7')">7</button>
-        <button class="btn-num" onclick="add('8')">8</button>
-        <button class="btn-num" onclick="add('9')">9</button>
-        <button class="btn-op" onclick="setOp('*')">×</button>
+        <button class="num" onclick="add('7')">7</button>
+        <button class="num" onclick="add('8')">8</button>
+        <button class="num" onclick="add('9')">9</button>
+        <button class="op" onclick="addOp('*')">×</button>
 
-        <button class="btn-num" onclick="add('4')">4</button>
-        <button class="btn-num" onclick="add('5')">5</button>
-        <button class="btn-num" onclick="add('6')">6</button>
-        <button class="btn-op" onclick="setOp('-')">−</button>
+        <button class="num" onclick="add('4')">4</button>
+        <button class="num" onclick="add('5')">5</button>
+        <button class="num" onclick="add('6')">6</button>
+        <button class="op" onclick="addOp('-')">−</button>
 
-        <button class="btn-num" onclick="add('1')">1</button>
-        <button class="btn-num" onclick="add('2')">2</button>
-        <button class="btn-num" onclick="add('3')">3</button>
-        <button class="btn-op" onclick="setOp('+')">+</button>
+        <button class="num" onclick="add('1')">1</button>
+        <button class="num" onclick="add('2')">2</button>
+        <button class="num" onclick="add('3')">3</button>
+        <button class="op" onclick="addOp('+')">+</button>
 
-        <button class="btn-num zero" onclick="add('0')">0</button>
-        <button class="btn-num" onclick="add('.')">.</button>
-        <button class="btn-op" onclick="calculate()">=</button>
+        <button class="num zero" onclick="add('0')">0</button>
+        <button class="num" onclick="add('.')">.</button>
+        <button class="op" onclick="calculate()">=</button>
     </div>
 
-    <div class="history-log" id="log">History will appear here...</div>
+    <div class="history" id="history">History starts here...</div>
 </div>
 
 <script>
     let current = '0';
     let buffer = '';
-    const resEl = document.getElementById('res');
-    const logEl = document.getElementById('log');
-
-    function toggleSci() {
-        const d = document.getElementById('drawer');
-        d.style.display = d.style.display === 'grid' ? 'none' : 'grid';
-    }
 
     function add(n) {
         current = (current === '0') ? n : current + n;
-        resEl.textContent = current;
+        document.getElementById('res').textContent = current;
     }
 
-    function reset() { current = '0'; buffer = ''; resEl.textContent = '0'; }
-    function del() { current = current.length > 1 ? current.slice(0, -1) : '0'; resEl.textContent = current; }
-
-    function setOp(o) {
+    function addOp(o) {
         buffer += current + o;
         current = '0';
     }
 
-    function sci(f) {
+    function sciOp(f) {
         if(f === '**2') current = `(${current})**2`;
         else current = f + current + ')';
         calculate();
@@ -200,16 +196,22 @@
 
     function calculate() {
         try {
-            let final = eval(buffer + current);
-            let entry = document.createElement('div');
-            entry.textContent = (buffer + current).replace(/\*\*/g, '^') + ' = ' + final;
-            logEl.prepend(entry);
+            let expr = buffer + current;
+            let result = eval(expr.replace('×','*').replace('÷','/').replace('−','-'));
             
-            current = String(Number(final.toFixed(6)));
+            let log = document.createElement('div');
+            log.textContent = `${expr} = ${result}`;
+            document.getElementById('history').prepend(log);
+
+            current = String(Number(result.toFixed(6)));
             buffer = '';
-            resEl.textContent = current;
-        } catch { resEl.textContent = "Error"; }
+            document.getElementById('res').textContent = current;
+        } catch(e) { document.getElementById('res').textContent = "Error"; }
     }
+
+    function reset() { current = '0'; buffer = ''; document.getElementById('res').textContent = '0'; }
+    function del() { current = current.length > 1 ? current.slice(0, -1) : '0'; document.getElementById('res').textContent = current; }
 </script>
+
 </body>
 </html>
