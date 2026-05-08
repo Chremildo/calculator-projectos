@@ -3,20 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pro Scientific Glass</title>
+    <title>Premium Scientific</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            --glass-bg: rgba(255, 255, 255, 0.75);
-            --glass-border: rgba(255, 255, 255, 0.5);
-            --text-dark: #1d1d1f;
-            --text-muted: #86868b;
-            --accent-orange: #ff9f0a;
-            --btn-light: rgba(255, 255, 255, 0.9);
-            --btn-dark: rgba(0, 0, 0, 0.06);
-            --shadow: 0 30px 60px rgba(0, 0, 0, 0.12);
+            --bg-gradient: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
+            --glass-bg: rgba(255, 255, 255, 0.8);
+            --glass-border: rgba(255, 255, 255, 0.6);
+            --accent: #ff9f0a;
+            --text: #1d1d1f;
+            --btn-gray: rgba(0, 0, 0, 0.05);
+            --shadow: 0 40px 80px rgba(0, 0, 0, 0.1);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
@@ -27,208 +25,79 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            padding: 10px;
         }
 
-        /* Wider container for scientific layout */
-        .wrapper { width: 100%; max-width: 460px; }
-
-        .calc {
+        /* Fixed Width Container for Stability */
+        .calc-frame {
+            width: 100%;
+            max-width: 480px;
             background: var(--glass-bg);
-            backdrop-filter: blur(30px);
-            -webkit-backdrop-filter: blur(30px);
-            border: 1px solid var(--glass-border);
-            border-radius: 45px;
-            padding: 32px;
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            border-radius: 40px;
+            border: 1.5px solid var(--glass-border);
+            padding: 30px;
             box-shadow: var(--shadow);
         }
 
         .display {
-            padding: 10px 15px 30px 15px;
             text-align: right;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-            min-height: 160px;
+            padding: 20px 10px 40px 10px;
         }
 
-        .expr { font-size: 1.1rem; color: var(--text-muted); margin-bottom: 8px; min-height: 1.2em; letter-spacing: -0.01em; }
-        .result { font-size: 4rem; font-weight: 300; color: var(--text-dark); letter-spacing: -0.04em; }
+        .expr { font-size: 1rem; color: #86868b; min-height: 1.5em; letter-spacing: 0.5px; }
+        .result { font-size: 4.5rem; font-weight: 300; color: var(--text); letter-spacing: -2px; }
 
-        /* Perfect 5-column grid */
-        .buttons {
+        /* Grid uses auto-layout to avoid squashing */
+        .grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
-            gap: 14px;
+            gap: 12px;
         }
 
         button {
-            aspect-ratio: 1;
-            border-radius: 50%;
+            height: 60px; /* Uniform height for all buttons */
+            border-radius: 18px; /* High-end rounded look instead of circles */
             border: none;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-weight: 500;
             cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            background: var(--btn-light);
-            color: var(--text-dark);
+            transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            background: white;
+            color: var(--text);
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
-        button:hover { background: #fff; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
-        button:active { transform: scale(0.92); filter: brightness(0.9); }
+        button:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.05); background: #fdfdfd; }
+        button:active { transform: scale(0.95); filter: brightness(0.95); }
 
-        /* Specialized colors */
-        button.op { background: var(--accent-orange); color: white; font-size: 1.6rem; }
-        button.sci { background: var(--btn-dark); color: #444; font-size: 1rem; font-weight: 400; }
-        button.clear { color: #ff3b30; font-weight: 600; }
-        
-        .zero { grid-column: span 2; aspect-ratio: auto; border-radius: 40px; justify-content: flex-start; padding-left: 30px; }
-        .equal { grid-column: span 2; aspect-ratio: auto; border-radius: 40px; background: var(--accent-orange); color: white; font-size: 1.8rem; }
+        /* Color States */
+        button.op { background: var(--accent); color: white; font-size: 1.5rem; }
+        button.sci { background: var(--btn-gray); color: #555; font-size: 0.9rem; }
+        button.ac { color: #ff3b30; }
 
-        .log-section {
-            margin-top: 25px;
-            padding-top: 20px;
-            max-height: 100px;
-            overflow-y: auto;
-            border-top: 1px solid rgba(0,0,0,0.08);
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            line-height: 1.6;
-        }
+        /* Double-wide items */
+        .span-2 { grid-column: span 2; }
     </style>
 </head>
 <body>
 
-<div class="wrapper">
-  <div class="calc">
+<div class="calc-frame">
     <div class="display">
-      <div class="expr" id="expr"></div>
-      <div class="result" id="result">0</div>
+        <div class="expr" id="expr"></div>
+        <div class="result" id="result">0</div>
     </div>
- 
-    <div class="buttons">
-      <button class="sci" onclick="inputSci('Math.sin(')">sin</button>
-      <button class="sci" onclick="inputSci('Math.cos(')">cos</button>
-      <button class="sci" onclick="inputSci('Math.tan(')">tan</button>
-      <button class="sci" onclick="inputSci('Math.log10(')">log</button>
-      <button class="sci" onclick="inputNum('Math.PI')">π</button>
 
-      <button class="sci" onclick="inputSci('Math.sqrt(')">√</button>
-      <button class="sci" onclick="inputSci('**2')">x²</button>
-      <button class="sci" onclick="inputNum('(')">(</button>
-      <button class="sci" onclick="inputNum(')')">)</button>
-      <button class="op" onclick="inputOp('/')">÷</button>
- 
-      <button onclick="inputNum('7')">7</button>
-      <button onclick="inputNum('8')">8</button>
-      <button onclick="inputNum('9')">9</button>
-      <button class="sci clear" onclick="clearAll()">AC</button>
-      <button class="op" onclick="inputOp('*')">×</button>
- 
-      <button onclick="inputNum('4')">4</button>
-      <button onclick="inputNum('5')">5</button>
-      <button onclick="inputNum('6')">6</button>
-      <button class="sci" onclick="clearLast()">⌫</button>
-      <button class="op" onclick="inputOp('-')">−</button>
- 
-      <button onclick="inputNum('1')">1</button>
-      <button onclick="inputNum('2')">2</button>
-      <button onclick="inputNum('3')">3</button>
-      <button class="sci" onclick="inputOp('%')">%</button>
-      <button class="op" onclick="inputOp('+')">+</button>
- 
-      <button class="zero" onclick="inputNum('0')">0</button>
-      <button onclick="inputDot()">.</button>
-      <button class="equal" onclick="calculate()">=</button>
-    </div>
- 
-    <div class="log-section" id="log"></div>
-  </div>
-</div>
+    <div class="grid">
+        <button class="sci" onclick="inputSci('Math.sin(')">sin</button>
+        <button class="sci" onclick="inputSci('Math.cos(')">cos</button>
+        <button class="sci" onclick="inputSci('Math.tan(')">tan</button>
+        <button class="sci" onclick="inputSci('Math.log10(')">log</button>
+        <button class="sci" onclick="inputNum('Math.PI')">π</button>
 
-<script>
-  let current = '0';
-  let fullExpression = '';
-  let justCalculated = false;
- 
-  const resultEl = document.getElementById('result');
-  const exprEl = document.getElementById('expr');
-  const logEl = document.getElementById('log');
- 
-  function updateDisplay() {
-    let displayCurrent = current.replace('Math.PI', '3.14159...');
-    resultEl.textContent = displayCurrent.length > 11 ? parseFloat(displayCurrent).toPrecision(6) : displayCurrent;
-    exprEl.textContent = fullExpression.replace(/Math\./g, '').replace(/\*\*/g, '^');
-  }
- 
-  function inputNum(n) {
-    if (current === '0' || justCalculated) {
-      current = n;
-      justCalculated = false;
-    } else {
-      current += n;
-    }
-    updateDisplay();
-  }
-
-  function inputSci(func) {
-    if (func === '**2') {
-        current += func;
-    } else {
-        current = func + current + ')';
-    }
-    justCalculated = false;
-    updateDisplay();
-  }
- 
-  function inputDot() {
-    if (!current.includes('.')) current += '.';
-    updateDisplay();
-  }
- 
-  function inputOp(op) {
-    fullExpression += current + ' ' + op + ' ';
-    current = '0';
-    justCalculated = false;
-    updateDisplay();
-  }
- 
-  function calculate() {
-    try {
-      let finalExpr = fullExpression + current;
-      let result = eval(finalExpr.replace('×', '*').replace('÷', '/').replace('−', '-'));
-      
-      result = parseFloat(result.toFixed(8));
-      
-      const entry = document.createElement('div');
-      entry.style.marginBottom = "5px";
-      entry.innerHTML = `<span>${finalExpr.replace(/Math\./g, '')} = </span><strong>${result}</strong>`;
-      logEl.prepend(entry);
-
-      current = String(result);
-      fullExpression = '';
-      justCalculated = true;
-      updateDisplay();
-    } catch (e) {
-      resultEl.textContent = "Erro";
-      setTimeout(clearAll, 1000);
-    }
-  }
- 
-  function clearAll() {
-    current = '0';
-    fullExpression = '';
-    justCalculated = false;
-    updateDisplay();
-  }
- 
-  function clearLast() {
-    current = current.length > 1 ? current.slice(0, -1) : '0';
-    updateDisplay();
-  }
-</script>
-</body>
-</html>
+        <button class="sci" onclick="inputSci('Math.sqrt(')">√</button>
+        <button class="sci" onclick="inputSci('**2')">x²</button>
+        <button class="sci" onclick="inputNum('(')">(</button>
