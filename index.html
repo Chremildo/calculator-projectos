@@ -1,15 +1,16 @@
-<!DOCTYPE html>
+      <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora iOS</title>
+    <title>Calculadora iPhone</title>
     <style>
         :root {
-            --ios-bg: #FFFFFF;
-            --ios-num: #F2F2F7; /* Light Gray for numbers */
-            --ios-top: #D1D1D6; /* Silver for top row */
-            --ios-orange: #FF9F0A;
+            --ios-white: #FFFFFF;
+            --ios-bg: #F2F2F7; /* Genuine iOS Light Mode background */
+            --btn-num: #FFFFFF;
+            --btn-top: #D1D1D6;
+            --btn-orange: #FF9F0A;
             --ios-text: #000000;
         }
 
@@ -21,57 +22,54 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            margin: 0;
         }
 
-        /* HARD-LOCKED CONTAINER: Prevents stretching/squashing */
-        .calculator {
-            width: 360px;
-            height: 760px;
+        /* Fixed iPhone Pro Dimensions */
+        .iphone {
+            width: 375px;
+            height: 812px;
             background-color: var(--ios-bg);
-            border-radius: 45px;
-            padding: 20px;
+            border-radius: 50px;
+            padding: 25px;
             display: flex;
             flex-direction: column;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
-            border: 1px solid #D1D1D6;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.12);
+            position: relative;
+            border: 8px solid #333; /* iPhone frame */
         }
 
         .header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 5px;
+            margin-bottom: 20px;
         }
 
-        .profile-img {
-            width: 42px;
-            height: 42px;
+        .profile-pic {
+            width: 45px;
+            height: 45px;
             border-radius: 50%;
             object-fit: cover;
-            border: 1px solid var(--ios-top);
+            border: 2px solid #D1D1D6;
         }
 
-        .brand {
-            color: #8E8E93;
-            font-size: 0.7rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1.2px;
-        }
+        .name { color: #8E8E93; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
 
-        /* SCROLLABLE HISTORY: Pro look */
-        .history-pane {
-            height: 50px;
-            overflow-y: auto;
+        /* THE HISTORY LOG - Real Apple functionality */
+        .history-tray {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
             text-align: right;
-            padding: 0 10px;
+            padding: 10px;
+            overflow-y: auto;
             color: #8E8E93;
-            font-size: 1.1rem;
-            margin-top: auto;
+            font-size: 1.2rem;
+            min-height: 100px;
         }
 
-        .display {
+        .current-display {
             text-align: right;
             padding: 10px;
             color: var(--ios-text);
@@ -79,11 +77,11 @@
             font-weight: 300;
             letter-spacing: -2px;
             line-height: 1;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
         }
 
-        /* SCIENTIFIC BAR: Clean & Compact */
-        .sci-bar {
+        /* Scientific Row */
+        .sci-row {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 12px;
@@ -91,140 +89,143 @@
         }
 
         .sci-btn {
-            background: var(--ios-num);
-            color: var(--ios-orange);
+            background: #E5E5EA;
+            color: var(--btn-orange);
             border: none;
-            padding: 10px;
-            border-radius: 12px;
-            font-size: 0.8rem;
-            cursor: pointer;
+            padding: 12px;
+            border-radius: 15px;
+            font-size: 0.85rem;
             font-weight: 600;
+            cursor: pointer;
         }
 
-        /* THE GRID FIX: Precise 75px circles */
-        .grid {
+        /* KEYPAD: Fixed 78px circles */
+        .keypad {
             display: grid;
-            grid-template-columns: repeat(4, 75px);
-            grid-template-rows: repeat(5, 75px);
+            grid-template-columns: repeat(4, 78px);
+            grid-template-rows: repeat(5, 78px);
             gap: 12px;
             justify-content: center;
         }
 
         button.key {
-            width: 75px;
-            height: 75px;
+            width: 78px;
+            height: 78px;
             border-radius: 50%;
             border: none;
-            font-size: 2rem;
+            font-size: 2.1rem;
+            font-weight: 400;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: brightness 0.1s;
+            transition: background 0.2s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
 
-        button.key:active { filter: brightness(0.9); }
+        button.key:active { background-color: #C7C7CC; }
 
-        .btn-num { background-color: var(--ios-num); color: var(--ios-text); }
-        .btn-top { background-color: var(--ios-top); color: var(--ios-text); font-size: 1.6rem; }
-        .btn-op { background-color: var(--ios-orange); color: white; font-size: 2.3rem; }
+        .num { background-color: var(--btn-num); color: black; }
+        .top { background-color: var(--btn-top); color: black; font-size: 1.7rem; }
+        .op  { background-color: var(--btn-orange); color: white; font-size: 2.4rem; }
 
-        /* Perfect Zero Pill Alignment */
+        /* Apple 0 Button Alignment */
         .zero {
             grid-column: span 2;
-            width: 162px; /* 75+75+12 gap */
+            width: 168px; /* (78*2) + 12 gap */
             border-radius: 50px;
             justify-content: flex-start;
-            padding-left: 30px;
+            padding-left: 32px;
         }
     </style>
 </head>
 <body>
 
-<div class="calculator">
+<div class="iphone">
     <div class="header">
-        <img src="cprofile.png" alt="Profile" class="profile-img">
-        <span class="brand">Cremildo Isaias</span>
+        <img src="cprofile.png" alt="Kevin" class="profile-pic">
+        <span class="name">Cremildo Isaias</span>
     </div>
 
-    <div class="history-pane" id="history"></div>
-    <div class="display" id="res">0</div>
+    <div class="history-tray" id="history"></div>
+    <div class="current-display" id="display">0</div>
 
-    <div class="sci-bar">
-        <button class="sci-btn" onclick="sci('sin')">sin</button>
-        <button class="sci-btn" onclick="sci('cos')">cos</button>
-        <button class="sci-btn" onclick="sci('sqrt')">√</button>
-        <button class="sci-btn" onclick="sci('sq')">x²</button>
+    <div class="sci-row">
+        <button class="sci-btn" onclick="sci('Math.sin')">sin</button>
+        <button class="sci-btn" onclick="sci('Math.cos')">cos</button>
+        <button class="sci-btn" onclick="sci('Math.sqrt')">√</button>
+        <button class="sci-btn" onclick="sci('pow')">x²</button>
     </div>
 
-    <div class="grid">
-        <button class="key btn-top" onclick="cls()">AC</button>
-        <button class="key btn-top" onclick="del()">⌫</button>
-        <button class="key btn-top" onclick="op('%')">%</button>
-        <button class="key btn-op" onclick="op('/')">÷</button>
+    <div class="keypad">
+        <button class="key top" onclick="reset()">AC</button>
+        <button class="key top" onclick="del()">⌫</button>
+        <button class="key top" onclick="addOp('%')">%</button>
+        <button class="key op" onclick="addOp('/')">÷</button>
 
-        <button class="key btn-num" onclick="num('7')">7</button>
-        <button class="key btn-num" onclick="num('8')">8</button>
-        <button class="key btn-num" onclick="num('9')">9</button>
-        <button class="key btn-op" onclick="op('*')">×</button>
+        <button class="key num" onclick="add('7')">7</button>
+        <button class="key num" onclick="add('8')">8</button>
+        <button class="key num" onclick="add('9')">9</button>
+        <button class="key op" onclick="addOp('*')">×</button>
 
-        <button class="key btn-num" onclick="num('4')">4</button>
-        <button class="key btn-num" onclick="num('5')">5</button>
-        <button class="key btn-num" onclick="num('6')">6</button>
-        <button class="key btn-op" onclick="op('-')">−</button>
+        <button class="key num" onclick="add('4')">4</button>
+        <button class="key num" onclick="add('5')">5</button>
+        <button class="key num" onclick="add('6')">6</button>
+        <button class="key op" onclick="addOp('-')">−</button>
 
-        <button class="key btn-num" onclick="num('1')">1</button>
-        <button class="key btn-num" onclick="num('2')">2</button>
-        <button class="key btn-num" onclick="num('3')">3</button>
-        <button class="key btn-op" onclick="op('+')">+</button>
+        <button class="key num" onclick="add('1')">1</button>
+        <button class="key num" onclick="add('2')">2</button>
+        <button class="key num" onclick="add('3')">3</button>
+        <button class="key op" onclick="addOp('+')">+</button>
 
-        <button class="key btn-num zero" onclick="num('0')">0</button>
-        <button class="key btn-num" onclick="num('.')">,</button>
-        <button class="key btn-op" onclick="calc()">=</button>
+        <button class="key num zero" onclick="add('0')">0</button>
+        <button class="key num" onclick="add('.')">,</button>
+        <button class="key op" onclick="calculate()">=</button>
     </div>
 </div>
 
 <script>
-    let cur = '0';
-    let buf = '';
-    const resDiv = document.getElementById('res');
-    const histDiv = document.getElementById('history');
+    let current = '0';
+    let buffer = '';
 
-    function num(n) {
-        if (cur === '0' && n !== '.') cur = n;
-        else cur += n;
-        resDiv.textContent = cur;
+    function add(n) {
+        current = (current === '0' && n !== '.') ? n : current + n;
+        document.getElementById('display').textContent = current;
     }
 
-    function op(s) {
-        buf += cur + ' ' + s + ' ';
-        histDiv.textContent = buf;
-        cur = '0';
+    function addOp(o) {
+        buffer += current + ' ' + o + ' ';
+        current = '0';
     }
 
-    function calc() {
+    function calculate() {
         try {
-            let expr = buf + cur;
+            let expr = buffer + current;
             let result = eval(expr.replace('×','*').replace('÷','/').replace('−','-'));
-            histDiv.innerHTML = `<div>${expr} =</div>`;
-            cur = String(Number(result.toFixed(8)));
-            resDiv.textContent = cur;
-            buf = '';
-        } catch { resDiv.textContent = "Error"; }
+            
+            // Add to history tray
+            let tray = document.getElementById('history');
+            tray.innerHTML += `<div>${expr} =</div>`;
+            tray.scrollTop = tray.scrollHeight;
+
+            current = String(Number(result.toFixed(8)));
+            buffer = '';
+            document.getElementById('display').textContent = current;
+        } catch { document.getElementById('display').textContent = "Error"; }
     }
 
-    function sci(t) {
-        let n = parseFloat(cur);
-        if(t === 'sin') cur = Math.sin(n);
-        if(t === 'cos') cur = Math.cos(n);
-        if(t === 'sqrt') cur = Math.sqrt(n);
-        if(t === 'sq') cur = Math.pow(n, 2);
-        cur = String(Number(parseFloat(cur).toFixed(6)));
-        resDiv.textContent = cur;
+    function sci(type) {
+        let n = parseFloat(current);
+        if(type === 'Math.sin') current = Math.sin(n);
+        if(type === 'Math.cos') current = Math.cos(n);
+        if(type === 'Math.sqrt') current = Math.sqrt(n);
+        if(type === 'pow') current = Math.pow(n, 2);
+        current = String(Number(current.toFixed(6)));
+        document.getElementById('display').textContent = current;
     }
 
-    function cls() { cur = '0'; buf = ''; resDiv.textContent = '0'; histDiv.textContent = ''; }
-    function del() { cur = cur.length > 1 ? cur.slice(0, -1) : '0'; resDiv.textContent = cur; }
+    function reset() { current = '0'; buffer = ''; document.getElementById('display').textContent = '0'; document.getElementById('history').innerHTML = ''; }
+    function del() { current = current.length > 1 ? current.slice(0, -1) : '0'; document.getElementById('display').textContent = current; }
 </script>
 
 </body>
