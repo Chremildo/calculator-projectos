@@ -21,30 +21,29 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
+            padding: 20px;
         }
 
-        /* HARD-LOCKED CONTAINER: Prevents elements from disappearing */
+        /* FLEXIBLE CONTAINER: No fixed height so nothing gets cut off */
         .calculator {
             width: 375px;
-            height: 812px;
             background-color: var(--ios-bg);
             border-radius: 50px;
-            padding: 15px 25px;
+            padding: 20px 25px;
             display: flex;
             flex-direction: column;
             box-shadow: 0 30px 60px rgba(0,0,0,0.1);
             border: 1px solid #D1D1D6;
         }
 
-        /* Top 3-Dots Menu */
+        /* Top Bar with 3 Dots */
         .top-bar {
             display: flex;
             justify-content: flex-end;
-            padding: 10px 5px;
-            height: 40px;
+            padding-bottom: 10px;
         }
 
-        .dots-icon {
+        .dots {
             color: var(--ios-orange);
             font-size: 1.8rem;
             letter-spacing: 2px;
@@ -52,43 +51,62 @@
             line-height: 0.5;
         }
 
-        /* Locked History Area */
+        /* History: Stays visible above the result */
         .history-tape {
-            height: 80px;
-            overflow-y: auto;
             text-align: right;
-            padding: 10px;
             color: #8E8E93;
-            font-size: 1.4rem;
-            margin-top: auto;
+            font-size: 1.2rem;
+            min-height: 40px;
+            margin-bottom: 5px;
+            overflow: hidden;
         }
 
         .display {
             text-align: right;
-            padding: 0 10px 20px 10px;
             color: var(--ios-text);
-            font-size: 5.8rem;
+            font-size: 5.5rem;
             font-weight: 300;
             letter-spacing: -3px;
             line-height: 1;
+            margin-bottom: 20px;
+            word-wrap: break-word;
         }
 
-        /* Fixed Keypad - Exact 80px circles */
+        /* Scientific Row: Compact but Visible */
+        .sci-bar {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .sci-btn {
+            background: var(--ios-num);
+            color: var(--ios-orange);
+            border: none;
+            padding: 10px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* Grid: Precision Circles */
         .grid {
             display: grid;
-            grid-template-columns: repeat(4, 80px);
-            grid-template-rows: repeat(5, 80px);
+            grid-template-columns: repeat(4, 75px);
+            grid-template-rows: repeat(5, 75px);
             gap: 12px;
             justify-content: center;
+            margin-bottom: 20px;
         }
 
-        button {
-            width: 80px;
-            height: 80px;
+        button.key {
+            width: 75px;
+            height: 75px;
             border-radius: 50%;
             border: none;
-            font-size: 2.2rem;
-            font-weight: 400;
+            font-size: 2rem;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -96,77 +114,73 @@
             transition: opacity 0.1s;
         }
 
-        button:active { opacity: 0.5; }
-
-        .btn-num { background-color: var(--ios-num); color: black; }
-        .btn-top { background-color: var(--ios-top); color: black; font-size: 1.8rem; }
-        .btn-op  { background-color: var(--ios-orange); color: white; font-size: 2.6rem; }
+        button.key:active { opacity: 0.5; }
+        .btn-n { background: var(--ios-num); color: black; }
+        .btn-t { background: var(--ios-top); color: black; font-size: 1.6rem; }
+        .btn-o { background: var(--ios-orange); color: white; font-size: 2.4rem; }
 
         .zero {
             grid-column: span 2;
-            width: 172px;
+            width: 162px;
             border-radius: 50px;
             justify-content: flex-start;
-            padding-left: 32px;
+            padding-left: 28px;
         }
 
-        /* Bottom Toggle Menu */
+        /* Bottom Nav with Toggle */
         .bottom-nav {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px 10px 10px;
-            height: 60px;
+            padding-top: 10px;
+            border-top: 1px solid #F2F2F7;
         }
 
-        .nav-icon {
-            color: var(--ios-orange);
-            font-size: 1.6rem;
-            cursor: pointer;
-        }
-
-        .nav-label {
-            color: #8E8E93;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
+        .nav-icon { color: var(--ios-orange); font-size: 1.5rem; cursor: pointer; }
+        .nav-label { color: #8E8E93; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; }
     </style>
 </head>
 <body>
 
 <div class="calculator">
     <div class="top-bar">
-        <div class="dots-icon">...</div>
+        <div class="dots">...</div>
     </div>
 
     <div class="history-tape" id="hist"></div>
     <div class="display" id="res">0</div>
 
+    <div class="sci-bar">
+        <button class="sci-btn" onclick="sci('sin')">sin</button>
+        <button class="sci-btn" onclick="sci('cos')">cos</button>
+        <button class="sci-btn" onclick="sci('sqrt')">√</button>
+        <button class="sci-btn" onclick="sci('sq')">x²</button>
+    </div>
+
     <div class="grid">
-        <button class="btn-top" onclick="cls()">AC</button>
-        <button class="btn-top" onclick="toggle()">+/-</button>
-        <button class="btn-top" onclick="pct()">%</button>
-        <button class="btn-op" onclick="op('/')">÷</button>
+        <button class="key btn-t" onclick="cls()">AC</button>
+        <button class="key btn-t" onclick="toggle()">+/-</button>
+        <button class="key btn-t" onclick="pct()">%</button>
+        <button class="key btn-o" onclick="op('/')">÷</button>
 
-        <button class="btn-num" onclick="num('7')">7</button>
-        <button class="btn-num" onclick="num('8')">8</button>
-        <button class="btn-num" onclick="num('9')">9</button>
-        <button class="btn-op" onclick="op('*')">×</button>
+        <button class="key btn-n" onclick="num('7')">7</button>
+        <button class="key btn-n" onclick="num('8')">8</button>
+        <button class="key btn-n" onclick="num('9')">9</button>
+        <button class="key btn-o" onclick="op('*')">×</button>
 
-        <button class="btn-num" onclick="num('4')">4</button>
-        <button class="btn-num" onclick="num('5')">5</button>
-        <button class="btn-num" onclick="num('6')">6</button>
-        <button class="btn-op" onclick="op('-')">−</button>
+        <button class="key btn-n" onclick="num('4')">4</button>
+        <button class="key btn-n" onclick="num('5')">5</button>
+        <button class="key btn-n" onclick="num('6')">6</button>
+        <button class="key btn-o" onclick="op('-')">−</button>
 
-        <button class="btn-num" onclick="num('1')">1</button>
-        <button class="btn-num" onclick="num('2')">2</button>
-        <button class="btn-num" onclick="num('3')">3</button>
-        <button class="btn-op" onclick="op('+')">+</button>
+        <button class="key btn-n" onclick="num('1')">1</button>
+        <button class="key btn-n" onclick="num('2')">2</button>
+        <button class="key btn-n" onclick="num('3')">3</button>
+        <button class="key btn-o" onclick="op('+')">+</button>
 
-        <button class="btn-num zero" onclick="num('0')">0</button>
-        <button class="btn-num" onclick="num('.')">,</button>
-        <button class="btn-op" onclick="calc()">=</button>
+        <button class="key btn-n zero" onclick="num('0')">0</button>
+        <button class="key btn-n" onclick="num('.')">,</button>
+        <button class="key btn-o" onclick="calc()">=</button>
     </div>
 
     <div class="bottom-nav">
@@ -202,8 +216,17 @@
             cur = String(Number(result.toFixed(8)));
             d.textContent = cur;
             buf = '';
-            h.scrollTop = h.scrollHeight;
         } catch { d.textContent = "Error"; }
+    }
+
+    function sci(t) {
+        let n = parseFloat(cur);
+        if(t === 'sin') cur = Math.sin(n);
+        if(t === 'cos') cur = Math.cos(n);
+        if(t === 'sqrt') cur = Math.sqrt(n);
+        if(t === 'sq') cur = Math.pow(n, 2);
+        cur = String(Number(parseFloat(cur).toFixed(6)));
+        d.textContent = cur;
     }
 
     function toggle() { cur = String(parseFloat(cur) * -1); d.textContent = cur; }
