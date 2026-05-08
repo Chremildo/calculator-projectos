@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora iPhone Pro</title>
+    <title>Calculadora iPhone</title>
     <style>
         :root {
             --ios-bg: #FFFFFF;
-            --ios-num: #F2F2F7; /* Apple light gray num background */
-            --ios-top: #D1D1D6; /* Apple silver top background */
+            --ios-num: #F2F2F7;
+            --ios-top: #D1D1D6;
             --ios-orange: #FF9F0A;
             --ios-text: #000000;
         }
@@ -23,8 +23,8 @@
             min-height: 100vh;
         }
 
-        /* Fixed iPhone Pro Shape - Prevents any squashing */
-        .iphone-frame {
+        /* Fixed iPhone Frame */
+        .calculator {
             width: 375px;
             height: 812px;
             background-color: var(--ios-bg);
@@ -40,54 +40,51 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
         }
 
         .profile-pic {
-            width: 48px;
-            height: 48px;
+            width: 45px;
+            height: 45px;
             border-radius: 50%;
             object-fit: cover;
-            border: 2px solid var(--ios-top);
+            border: 1px solid #D1D1D6;
         }
 
-        .brand { color: #8E8E93; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; }
-
-        /* REAL HISTORY LOG - Scrolling area */
-        .history-log {
+        /* History Tape - Small gray text above current total */
+        .history-tape {
             flex: 1;
             display: flex;
             flex-direction: column;
             justify-content: flex-end;
             text-align: right;
             padding: 10px;
-            overflow-y: auto;
             color: #8E8E93;
-            font-size: 1.2rem;
-            min-height: 80px;
+            font-size: 1.4rem;
+            min-height: 60px;
         }
 
         .display {
             text-align: right;
-            padding: 10px;
+            padding: 0 10px 20px 10px;
             color: var(--ios-text);
-            font-size: 5.8rem;
+            font-size: 6rem;
             font-weight: 300;
             letter-spacing: -3px;
-            line-height: 1;
-            margin-bottom: 25px;
+            line-height: 0.9;
         }
 
-        /* Fixed 80px circles for the true Apple look */
+        /* KEYPAD GRID: Precise Apple spacing */
         .grid {
             display: grid;
             grid-template-columns: repeat(4, 80px);
             grid-template-rows: repeat(5, 80px);
             gap: 12px;
             justify-content: center;
+            margin-bottom: 20px;
         }
 
-        button.key {
+        button {
             width: 80px;
             height: 80px;
             border-radius: 50%;
@@ -98,19 +95,19 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: opacity 0.2s;
+            transition: opacity 0.15s;
         }
 
-        button.key:active { opacity: 0.6; }
+        button:active { opacity: 0.5; }
 
-        .num { background-color: var(--ios-num); color: black; }
-        .top { background-color: var(--ios-top); color: black; font-size: 1.8rem; }
-        .op  { background-color: var(--ios-orange); color: white; font-size: 2.5rem; }
+        .btn-num { background-color: var(--ios-num); color: black; }
+        .btn-top { background-color: var(--ios-top); color: black; font-size: 1.8rem; }
+        .btn-op  { background-color: var(--ios-orange); color: white; font-size: 2.6rem; }
 
-        /* The Pill Shape Zero + The Decimal Button */
+        /* The Zero Pill */
         .zero {
             grid-column: span 2;
-            width: 172px; /* 80 + 80 + 12 gap */
+            width: 172px; /* 80+80+12 */
             border-radius: 50px;
             justify-content: flex-start;
             padding-left: 32px;
@@ -119,74 +116,81 @@
 </head>
 <body>
 
-<div class="iphone-frame">
+<div class="calculator">
     <div class="header">
         <img src="cprofile.png" alt="Kevin" class="profile-pic">
-        <span class="brand">Cremildo Isaias</span>
     </div>
 
-    <div class="history-log" id="history"></div>
-    <div class="display" id="display">0</div>
+    <div class="history-tape" id="hist"></div>
+    <div class="display" id="res">0</div>
 
     <div class="grid">
-        <button class="key top" onclick="cls()">AC</button>
-        <button class="key top" onclick="del()">⌫</button>
-        <button class="key top" onclick="addOp('%')">%</button>
-        <button class="key op" onclick="addOp('/')">÷</button>
+        <button class="btn-top" onclick="cls()">AC</button>
+        <button class="btn-top" onclick="toggle()">+/-</button>
+        <button class="btn-top" onclick="pct()">%</button>
+        <button class="btn-op" onclick="op('/')">÷</button>
 
-        <button class="key num" onclick="add('7')">7</button>
-        <button class="key num" onclick="add('8')">8</button>
-        <button class="key num" onclick="add('9')">9</button>
-        <button class="key op" onclick="addOp('*')">×</button>
+        <button class="btn-num" onclick="num('7')">7</button>
+        <button class="btn-num" onclick="num('8')">8</button>
+        <button class="btn-num" onclick="num('9')">9</button>
+        <button class="btn-op" onclick="op('*')">×</button>
 
-        <button class="key num" onclick="add('4')">4</button>
-        <button class="key num" onclick="add('5')">5</button>
-        <button class="key num" onclick="add('6')">6</button>
-        <button class="key op" onclick="addOp('-')">−</button>
+        <button class="btn-num" onclick="num('4')">4</button>
+        <button class="btn-num" onclick="num('5')">5</button>
+        <button class="btn-num" onclick="num('6')">6</button>
+        <button class="btn-op" onclick="op('-')">−</button>
 
-        <button class="key num" onclick="add('1')">1</button>
-        <button class="key num" onclick="add('2')">2</button>
-        <button class="key num" onclick="add('3')">3</button>
-        <button class="key op" onclick="addOp('+')">+</button>
+        <button class="btn-num" onclick="num('1')">1</button>
+        <button class="btn-num" onclick="num('2')">2</button>
+        <button class="btn-num" onclick="num('3')">3</button>
+        <button class="btn-op" onclick="op('+')">+</button>
 
-        <button class="key num zero" onclick="add('0')">0</button>
-        <button class="key num" onclick="add('.')">,</button>
-        <button class="key op" onclick="calculate()">=</button>
+        <button class="btn-num zero" onclick="num('0')">0</button>
+        <button class="btn-num" onclick="num('.')">,</button>
+        <button class="btn-op" onclick="calc()">=</button>
     </div>
 </div>
 
 <script>
-    let current = '0';
-    let buffer = '';
+    let cur = '0';
+    let buf = '';
+    const d = document.getElementById('res');
+    const h = document.getElementById('hist');
 
-    function add(n) {
-        current = (current === '0' && n !== '.') ? n : current + n;
-        document.getElementById('display').textContent = current;
+    function num(n) {
+        if (cur === '0' && n !== '.') cur = n;
+        else cur += n;
+        d.textContent = cur;
     }
 
-    function addOp(o) {
-        buffer += current + ' ' + o + ' ';
-        current = '0';
+    function op(s) {
+        buf += cur + ' ' + s + ' ';
+        h.textContent = buf;
+        cur = '0';
     }
 
-    function calculate() {
+    function calc() {
         try {
-            let expr = (buffer + current).replace('×','*').replace('÷','/').replace('−','-');
-            let res = eval(expr);
-            
-            // Add to history tray
-            let hist = document.getElementById('history');
-            hist.innerHTML += `<div>${buffer}${current} =</div>`;
-            hist.scrollTop = hist.scrollHeight;
-
-            current = String(Number(res.toFixed(8)));
-            buffer = '';
-            document.getElementById('display').textContent = current;
-        } catch { document.getElementById('display').textContent = "Error"; }
+            let expr = buf + cur;
+            let result = eval(expr.replace('×','*').replace('÷','/').replace('−','-'));
+            h.innerHTML = `<div>${expr} =</div>`;
+            cur = String(Number(result.toFixed(8)));
+            d.textContent = cur;
+            buf = '';
+        } catch { d.textContent = "Error"; }
     }
 
-    function cls() { current = '0'; buffer = ''; document.getElementById('display').textContent = '0'; document.getElementById('history').innerHTML = ''; }
-    function del() { current = current.length > 1 ? current.slice(0, -1) : '0'; document.getElementById('display').textContent = current; }
+    function toggle() { 
+        cur = String(parseFloat(cur) * -1); 
+        d.textContent = cur; 
+    }
+
+    function pct() { 
+        cur = String(parseFloat(cur) / 100); 
+        d.textContent = cur; 
+    }
+
+    function cls() { cur = '0'; buf = ''; d.textContent = '0'; h.textContent = ''; }
 </script>
 
 </body>
