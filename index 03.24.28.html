@@ -1,35 +1,305 @@
   <!DOCTYPE html>
-  <html lang="eng-US">
-    <head>
-               <meta charset="UTF-8">
-               <meta  http-equiv=X-UA-comatible content="IE=edge">
-     <meta name="viewport" content="width=device-width, inicial-scale=1.0">
-     <title>Cremildo jorge isaias | WWD 130</title>
-        </head>
-  FLAMEGO
-  <body>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora Minimalista</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.4);
+            --text-dark: #1d1d1f;
+            --text-muted: #86868b;
+            --accent-orange: #ff9f0a;
+            --btn-light: rgba(255, 255, 255, 0.8);
+            --btn-dark: rgba(0, 0, 0, 0.05);
+            --shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
 
-  
-  <header>
-    <nav>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', -apple-system, sans-serif;
+        }
 
-      <a sref="#">home</a>
-      <a sref="wwr/rafting webesite"></a>
+        body {
+            background: var(--bg-gradient);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
 
-    </nav>
-     </header>
-    <main>
-    <h1>Cremildo jorge isaias | WWD 130</h1>
+        .wrapper {
+            width: 100%;
+            max-width: 360px;
+        }
 
-    <img src="images/images.JPG "alt="hello my name is Cremildo jorge isaias"width =200px
-    <p></p>
-     <p>Hello !my name is Cremildo jorge isaias, im from <b>brazil</b> <i>rio de janeiro</i> i enjoy hang around with friends and over the weekend
-      i was in the great cristo redentor i could not stop eating and watch the scenes throug the mountain.
-     </p>
-    </main>
- <footer>
-<p>&copy may-2025 Cremildo jorge isaias </p></h1>Rio de janeiro🇧🇷 </p>
- </footer>
+        .calc {
+            background: var(--glass-bg);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid var(--glass-border);
+            border-radius: 40px;
+            padding: 24px;
+            box-shadow: var(--shadow);
+        }
 
+        .display {
+            padding: 40px 10px 20px 10px;
+            text-align: right;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            min-height: 160px;
+        }
+
+        .expr {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            min-height: 1.2em;
+        }
+
+        .result {
+            font-size: 3.5rem;
+            font-weight: 300;
+            color: var(--text-dark);
+            letter-spacing: -0.03em;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        button {
+            aspect-ratio: 1;
+            border-radius: 50%;
+            border: none;
+            font-size: 1.5rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            background: var(--btn-light);
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            outline: none;
+        }
+
+        button:hover {
+            background: #ffffff;
+            transform: scale(1.05);
+        }
+
+        button:active {
+            transform: scale(0.95);
+            filter: brightness(0.9);
+        }
+
+        button.op {
+            background: var(--accent-orange);
+            color: white;
+            font-size: 1.8rem;
+        }
+
+        button.special {
+            background: var(--btn-dark);
+            color: var(--text-dark);
+            font-size: 1.1rem;
+        }
+
+        button.zero {
+            grid-column: span 2;
+            aspect-ratio: auto;
+            border-radius: 40px;
+            justify-content: flex-start;
+            padding-left: 28px;
+        }
+
+        .log-section {
+            margin-top: 24px;
+            padding: 12px 5px;
+            max-height: 100px;
+            overflow-y: auto;
+            border-top: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .log-title {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .log-entry {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            padding: 4px 0;
+            color: var(--text-muted);
+        }
+
+        .log-val {
+            color: var(--text-dark);
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+<div class="wrapper">
+  <div class="calc">
+    <div class="display">
+      <div class="expr" id="expr"></div>
+      <div class="result" id="result">0</div>
+    </div>
+ 
+    <div class="buttons">
+      <button class="special" onclick="clearAll()">AC</button>
+      <button class="special" onclick="clearLast()">⌫</button>
+      <button class="special" onclick="inputOp('%')">%</button>
+      <button class="op" onclick="inputOp('/')">÷</button>
+ 
+      <button onclick="inputNum('7')">7</button>
+      <button onclick="inputNum('8')">8</button>
+      <button onclick="inputNum('9')">9</button>
+      <button class="op" onclick="inputOp('*')">×</button>
+ 
+      <button onclick="inputNum('4')">4</button>
+      <button onclick="inputNum('5')">5</button>
+      <button onclick="inputNum('6')">6</button>
+      <button class="op" onclick="inputOp('-')">−</button>
+ 
+      <button onclick="inputNum('1')">1</button>
+      <button onclick="inputNum('2')">2</button>
+      <button onclick="inputNum('3')">3</button>
+      <button class="op" onclick="inputOp('+')">+</button>
+ 
+      <button class="zero" onclick="inputNum('0')">0</button>
+      <button onclick="inputDot()">.</button>
+      <button class="op" onclick="calculate()">=</button>
+    </div>
+ 
+    <div class="log-section">
+      <div class="log-title">Histórico</div>
+      <div id="log"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  let current = '0';
+  let operator = null;
+  let prev = null;
+  let justCalc = false;
+ 
+  const resultEl  = document.getElementById('result');
+  const exprEl    = document.getElementById('expr');
+  const logEl     = document.getElementById('log');
+ 
+  const opSymbol = { '+':'+', '-':'-', '*': '×', '/': '÷', '%': '%' };
+ 
+  function updateDisplay(val, expr = '') {
+    resultEl.textContent = val;
+    exprEl.textContent   = expr;
+  }
+ 
+  function inputNum(n) {
+    if (justCalc) { current = n; justCalc = false; }
+    else current = (current === '0') ? n : current + n;
+    updateDisplay(current);
+  }
+ 
+  function inputDot() {
+    if (justCalc) { current = '0.'; justCalc = false; }
+    else if (!current.includes('.')) current += '.';
+    updateDisplay(current);
+  }
+ 
+  function inputOp(op) {
+    if (operator && !justCalc) compute();
+    prev     = parseFloat(current);
+    operator = op;
+    justCalc = true;
+    updateDisplay(current, `${prev} ${opSymbol[op]}`);
+  }
+ 
+  function compute() {
+    if (prev === null || operator === null) return;
+    const b = parseFloat(current);
+    const sym = opSymbol[operator];
+    let res;
+ 
+    if (operator === '/' && b === 0) {
+      alert("Não é possível dividir por zero");
+      clearAll();
+      return;
+    }
+ 
+    switch (operator) {
+      case '+': res = prev + b; break;
+      case '-': res = prev - b; break;
+      case '*': res = prev * b; break;
+      case '/': res = prev / b; break;
+      case '%': res = prev % b; break;
+    }
+ 
+    res = parseFloat(res.toFixed(10));
+    const fullExpr = `${prev} ${sym} ${b} =`;
+    addLog(fullExpr, res);
+    
+    current  = String(res);
+    updateDisplay(current, fullExpr);
+    operator = null;
+    prev     = null;
+    justCalc = true;
+  }
+ 
+  function calculate() { compute(); }
+ 
+  function clearAll() {
+    current = '0'; operator = null; prev = null; justCalc = false;
+    updateDisplay('0', '');
+  }
+ 
+  function clearLast() {
+    if (justCalc) return;
+    current = current.length > 1 ? current.slice(0, -1) : '0';
+    updateDisplay(current);
+  }
+ 
+  function addLog(expr, val) {
+    const entry = document.createElement('div');
+    entry.className = 'log-entry';
+    entry.innerHTML = `<span>${expr}</span><span class="log-val">${val}</span>`;
+    logEl.prepend(entry);
+  }
+
+  // Keyboard support for Mac
+  document.addEventListener('keydown', e => {
+    if (e.key >= '0' && e.key <= '9') inputNum(e.key);
+    if (e.key === '.') inputDot();
+    if (e.key === '+') inputOp('+');
+    if (e.key === '-') inputOp('-');
+    if (e.key === '*') inputOp('*');
+    if (e.key === '/') { e.preventDefault(); inputOp('/'); }
+    if (e.key === 'Enter' || e.key === '=') calculate();
+    if (e.key === 'Backspace') clearLast();
+    if (e.key === 'Escape') clearAll();
+  });
+</script>
 </body>
 </html>
