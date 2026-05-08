@@ -3,107 +3,134 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora Pro</title>
+    <title>Calculadora Apple 2026</title>
     <style>
         :root {
-            --ios-bg: #FFFFFF;
-            --ios-num: #F2F2F7;
-            --ios-top: #D1D1D6;
-            --ios-orange: #FF9F0A;
-            --ios-text: #000000;
+            --bg-black: #000000;
+            --btn-gray: #333333;
+            --btn-light: #A5A5A5;
+            --accent: #FF9F0A; /* Dynamic Accent */
+            --text-white: #FFFFFF;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, system-ui, sans-serif; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: "SF Pro Display", -apple-system, sans-serif; }
 
         body {
-            background-color: #E5E5EA;
+            background-color: #1c1c1e;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            padding: 20px;
         }
 
-        /* FLEXIBLE CONTAINER: No fixed height so nothing gets cut off */
         .calculator {
             width: 375px;
-            background-color: var(--ios-bg);
-            border-radius: 50px;
-            padding: 20px 25px;
+            height: 780px;
+            background-color: var(--bg-black);
+            border-radius: 45px;
+            padding: 20px;
             display: flex;
             flex-direction: column;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.1);
-            border: 1px solid #D1D1D6;
+            position: relative;
+            box-shadow: 0 50px 100px rgba(0,0,0,0.5);
+            overflow: hidden;
+            transition: background 0.3s;
         }
 
-        /* Top Bar with 3 Dots */
+        /* Top Bar & Menu */
         .top-bar {
             display: flex;
-            justify-content: flex-end;
-            padding-bottom: 10px;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 10px;
+            z-index: 100;
+        }
+
+        .calc-icon {
+            width: 30px;
+            height: 30px;
+            background: var(--accent);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
         }
 
         .dots {
-            color: var(--ios-orange);
+            color: var(--accent);
             font-size: 1.8rem;
-            letter-spacing: 2px;
             cursor: pointer;
-            line-height: 0.5;
+            transition: transform 0.2s;
         }
 
-        /* History: Stays visible above the result */
-        .history-tape {
+        /* Working Dropdown Menu */
+        .dropdown {
+            position: absolute;
+            right: 20px;
+            top: 60px;
+            background: rgba(44, 44, 46, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 14px;
+            width: 180px;
+            display: none;
+            flex-direction: column;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            z-index: 200;
+            border: 1px solid #3a3a3c;
+        }
+
+        .dropdown button {
+            background: none;
+            border: none;
+            color: white;
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 0.5px solid #3a3a3c;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .dropdown button:hover { background: rgba(255,255,255,0.1); }
+
+        /* Display Area */
+        .display-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
             text-align: right;
-            color: #8E8E93;
-            font-size: 1.2rem;
-            min-height: 40px;
-            margin-bottom: 5px;
-            overflow: hidden;
+            padding: 10px;
         }
 
-        .display {
-            text-align: right;
-            color: var(--ios-text);
-            font-size: 5.5rem;
-            font-weight: 300;
-            letter-spacing: -3px;
-            line-height: 1;
-            margin-bottom: 20px;
-            word-wrap: break-word;
-        }
+        .history-tape { color: #8E8E93; font-size: 1.4rem; min-height: 30px; }
+        .display { color: var(--text-white); font-size: 5.5rem; font-weight: 200; line-height: 1; }
 
-        /* Scientific Row: Compact but Visible */
-        .sci-bar {
+        /* Scientific Row (Toggleable) */
+        #sci-bar {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-            margin-bottom: 20px;
+            gap: 12px;
+            margin-bottom: 15px;
+            display: none; /* Default Hidden */
         }
 
         .sci-btn {
-            background: var(--ios-num);
-            color: var(--ios-orange);
+            background: #1c1c1e;
+            color: #d1d1d6;
             border: none;
             padding: 10px;
-            border-radius: 12px;
-            font-size: 0.85rem;
-            font-weight: 600;
+            border-radius: 10px;
+            font-size: 0.8rem;
             cursor: pointer;
         }
 
-        /* Grid: Precision Circles */
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(4, 75px);
-            grid-template-rows: repeat(5, 75px);
-            gap: 12px;
-            justify-content: center;
-            margin-bottom: 20px;
-        }
+        /* Main Grid */
+        .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
 
-        button.key {
-            width: 75px;
-            height: 75px;
+        .key {
+            aspect-ratio: 1/1;
             border-radius: 50%;
             border: none;
             font-size: 2rem;
@@ -111,46 +138,62 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: opacity 0.1s;
+            transition: 0.2s;
         }
 
-        button.key:active { opacity: 0.5; }
-        .btn-n { background: var(--ios-num); color: black; }
-        .btn-t { background: var(--ios-top); color: black; font-size: 1.6rem; }
-        .btn-o { background: var(--ios-orange); color: white; font-size: 2.4rem; }
+        .key:active { opacity: 0.6; }
+        .btn-n { background: var(--btn-gray); color: white; }
+        .btn-t { background: var(--btn-light); color: black; }
+        .btn-o { background: var(--accent); color: white; }
 
-        .zero {
-            grid-column: span 2;
-            width: 162px;
-            border-radius: 50px;
-            justify-content: flex-start;
-            padding-left: 28px;
+        .zero { grid-column: span 2; aspect-ratio: auto; border-radius: 50px; justify-content: flex-start; padding-left: 30px; }
+
+        /* History Overlay */
+        #history-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 150;
+            display: none;
+            flex-direction: column;
+            padding: 40px 20px;
+            color: white;
         }
 
-        /* Bottom Nav with Toggle */
-        .bottom-nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-top: 10px;
-            border-top: 1px solid #F2F2F7;
-        }
-
-        .nav-icon { color: var(--ios-orange); font-size: 1.5rem; cursor: pointer; }
-        .nav-label { color: #8E8E93; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; }
+        .home-indicator { width: 120px; height: 5px; background: white; border-radius: 10px; margin: 0 auto 10px; opacity: 0.3; }
     </style>
 </head>
 <body>
 
-<div class="calculator">
-    <div class="top-bar">
-        <div class="dots">...</div>
+<div class="calculator" id="calc-body">
+    <!-- Overlay for History -->
+    <div id="history-overlay">
+        <h2 style="margin-bottom: 20px;">Histórico</h2>
+        <div id="full-history" style="flex:1; overflow-y: auto; font-size: 1.2rem; color: #aaa;"></div>
+        <button onclick="toggleOverlay()" style="background: var(--accent); border:none; padding:15px; border-radius:10px; color:white; font-weight:bold;">Fechar</button>
     </div>
 
-    <div class="history-tape" id="hist"></div>
-    <div class="display" id="res">0</div>
+    <div class="top-bar">
+        <div class="calc-icon" id="mini-icon">÷</div>
+        <div class="menu-container">
+            <div class="dots" onclick="toggleMenu()">•••</div>
+            <div class="dropdown" id="menu">
+                <button onclick="toggleSci()">Modo Científico</button>
+                <button onclick="toggleOverlay()">Ver Histórico</button>
+                <button onclick="clearHistory()">Limpar Histórico</button>
+                <button onclick="changeAccent('#007AFF')">Cor: Azul</button>
+                <button onclick="changeAccent('#FF2D55')">Cor: Rosa</button>
+                <button onclick="changeAccent('#FF9F0A')">Cor: Laranja</button>
+            </div>
+        </div>
+    </div>
 
-    <div class="sci-bar">
+    <div class="display-container">
+        <div class="history-tape" id="hist"></div>
+        <div class="display" id="res">0</div>
+    </div>
+
+    <div id="sci-bar">
         <button class="sci-btn" onclick="sci('sin')">sin</button>
         <button class="sci-btn" onclick="sci('cos')">cos</button>
         <button class="sci-btn" onclick="sci('sqrt')">√</button>
@@ -159,7 +202,7 @@
 
     <div class="grid">
         <button class="key btn-t" onclick="cls()">AC</button>
-        <button class="key btn-t" onclick="toggle()">+/-</button>
+        <button class="key btn-t" onclick="toggle()">±</button>
         <button class="key btn-t" onclick="pct()">%</button>
         <button class="key btn-o" onclick="op('/')">÷</button>
 
@@ -183,27 +226,46 @@
         <button class="key btn-o" onclick="calc()">=</button>
     </div>
 
-    <div class="bottom-nav">
-        <span class="nav-icon">▤</span>
-        <span class="nav-label">Cremildo Isaias</span>
-        <span class="nav-icon">🕒</span>
-    </div>
+    <div class="home-indicator"></div>
 </div>
 
 <script>
     let cur = '0';
     let buf = '';
+    let logs = [];
     const d = document.getElementById('res');
     const h = document.getElementById('hist');
+    const menu = document.getElementById('menu');
+
+    function toggleMenu() { menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex'; }
+    
+    function toggleSci() {
+        const bar = document.getElementById('sci-bar');
+        bar.style.display = bar.style.display === 'grid' ? 'none' : 'grid';
+    }
+
+    function changeAccent(color) {
+        document.documentElement.style.setProperty('--accent', color);
+    }
+
+    function toggleOverlay() {
+        const overlay = document.getElementById('history-overlay');
+        const list = document.getElementById('full-history');
+        list.innerHTML = logs.map(item => `<p style="margin-bottom:10px;">${item}</p>`).join('');
+        overlay.style.display = overlay.style.display === 'flex' ? 'none' : 'flex';
+    }
+
+    function clearHistory() { logs = []; alert('Histórico limpo!'); }
 
     function num(n) {
         if (cur === '0' && n !== '.') cur = n;
-        else cur += n;
+        else if (cur.length < 9) cur += n;
         d.textContent = cur;
+        d.style.fontSize = cur.length > 6 ? '3.5rem' : '5.5rem';
     }
 
     function op(s) {
-        buf += cur + ' ' + s + ' ';
+        buf = cur + ' ' + s + ' ';
         h.textContent = buf;
         cur = '0';
     }
@@ -212,11 +274,13 @@
         try {
             let expr = buf + cur;
             let result = eval(expr.replace('×','*').replace('÷','/').replace('−','-'));
-            h.innerHTML = `<div>${expr} =</div>`;
-            cur = String(Number(result.toFixed(8)));
+            let finalRes = String(Number(result.toFixed(8)));
+            logs.push(`${expr} = ${finalRes}`); // Save to history
+            h.textContent = '';
+            cur = finalRes;
             d.textContent = cur;
             buf = '';
-        } catch { d.textContent = "Error"; }
+        } catch { d.textContent = "Erro"; }
     }
 
     function sci(t) {
@@ -232,6 +296,8 @@
     function toggle() { cur = String(parseFloat(cur) * -1); d.textContent = cur; }
     function pct() { cur = String(parseFloat(cur) / 100); d.textContent = cur; }
     function cls() { cur = '0'; buf = ''; d.textContent = '0'; h.textContent = ''; }
+
+    window.onclick = function(e) { if (!e.target.matches('.dots')) menu.style.display = 'none'; }
 </script>
 
 </body>
